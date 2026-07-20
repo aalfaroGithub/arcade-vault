@@ -89,15 +89,15 @@ Convenciones:
 
 ## Acceptance criteria
 
-- [ ] `/` muestra la Biblioteca: hero, buscador funcional (filtra por título), chips de categoría funcionales (filtran por `cat`) y grid de tarjetas de juego.
+- [x] `/` muestra la Biblioteca: hero, buscador funcional (filtra por título), chips de categoría funcionales (filtran por `cat`) y grid de tarjetas de juego.
 - [ ] Cada tarjeta de juego enlaza a `/game/[id]` con el `id` correcto.
 - [ ] `/game/[id]` muestra portada, descripción, tags, estadísticas y la tabla de mejores puntuaciones para ese juego.
-- [ ] El botón "Jugar ahora" en `/game/[id]` navega a `/game/[id]/play`.
+- [x] El botón "Jugar ahora" en `/game/[id]` navega a `/game/[id]/play`.
 - [ ] `/game/[id]/play` muestra el HUD y la pantalla CRT, con la puntuación incrementándose automáticamente mientras no está en pausa ni terminado.
 - [ ] Pulsar "Pausa" detiene el incremento de puntuación y muestra el overlay "EN PAUSA"; "Reanudar" lo retoma.
 - [ ] Pulsar "Fin" abre el modal de fin de partida mostrando la puntuación final.
 - [ ] Guardar la puntuación en el modal persiste un registro en `localStorage` y muestra el mensaje de confirmación.
-- [ ] `/auth` permite alternar entre "Iniciar sesión" y "Crear cuenta", y ambos formularios, al enviarse, guardan un usuario mock en `localStorage`, actualizan el Nav y redirigen a `/`.
+- [x] `/auth` permite alternar entre "Iniciar sesión" y "Crear cuenta", y ambos formularios, al enviarse, guardan un usuario mock en `localStorage`, actualizan el Nav y redirigen a `/`.
 - [ ] "Jugar como invitado" en `/auth` navega a `/` sin crear sesión.
 - [ ] Con sesión activa, el Nav muestra el nombre de usuario en vez del botón "Iniciar sesión"; cerrar sesión limpia `localStorage` y vuelve a mostrar el botón.
 - [ ] `/hall-of-fame` muestra tabs por juego, podio (top 3) y tabla completa de puntuaciones para el juego seleccionado.

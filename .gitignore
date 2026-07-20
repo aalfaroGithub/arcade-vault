@@ -36,6 +36,13 @@ yarn-error.log*
 # vercel
 .vercel
 
+# playwright screenshots (scratch, taken during manual/agent QA)
+.playwright-screenshots/*
+!.playwright-screenshots/.gitkeep
+
+.playwright-mcp/*
+!.playwright-mcp/.gitkeep
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
