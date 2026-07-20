@@ -45,22 +45,26 @@ function getAvUserServerSnapshot() {
   return null;
 }
 
-export default function Nav() {
-  const pathname = usePathname();
-  const router = useRouter();
-  const [open, setOpen] = useState(false);
+export function useAvUser(): AvUser | null {
   const rawUser = useSyncExternalStore(
     subscribeToAvUser,
     getAvUserSnapshot,
     getAvUserServerSnapshot,
   );
-  const user = useMemo<AvUser | null>(() => {
+  return useMemo<AvUser | null>(() => {
     try {
       return rawUser ? JSON.parse(rawUser) : null;
     } catch {
       return null;
     }
   }, [rawUser]);
+}
+
+export default function Nav() {
+  const pathname = usePathname();
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const user = useAvUser();
 
   const isActive = (name: "biblioteca" | "salon" | "auth") => {
     if (name === "biblioteca") {
