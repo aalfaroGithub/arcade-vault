@@ -15,4 +15,11 @@ https://github.com/Klerith/fernando-skills
 npx skills@latest add Klerith/fernando-skills
 ```
 
-## Main Branch Protected
+## Commands
+
+```bash
+npm run dev      # start dev server (Turbopack, default in Next 16)
+npm run build    # production build (Turbopack by default)
+npm run start    # run production build
+npm run lint      # ESLint via eslint-config-next (flat config)
+```
