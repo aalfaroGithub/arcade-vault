@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
 
 export interface AvUser {
   name: string;
@@ -28,22 +28,39 @@ export function writeAvUser(user: AvUser | null) {
   window.dispatchEvent(new Event(USER_CHANGE_EVENT));
 }
 
+function subscribeToAvUser(callback: () => void) {
+  window.addEventListener(USER_CHANGE_EVENT, callback);
+  window.addEventListener("storage", callback);
+  return () => {
+    window.removeEventListener(USER_CHANGE_EVENT, callback);
+    window.removeEventListener("storage", callback);
+  };
+}
+
+function getAvUserSnapshot() {
+  return localStorage.getItem(USER_KEY);
+}
+
+function getAvUserServerSnapshot() {
+  return null;
+}
+
 export default function Nav() {
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [user, setUser] = useState<AvUser | null>(null);
-
-  useEffect(() => {
-    setUser(readAvUser());
-    const onChange = () => setUser(readAvUser());
-    window.addEventListener(USER_CHANGE_EVENT, onChange);
-    window.addEventListener("storage", onChange);
-    return () => {
-      window.removeEventListener(USER_CHANGE_EVENT, onChange);
-      window.removeEventListener("storage", onChange);
-    };
-  }, []);
+  const rawUser = useSyncExternalStore(
+    subscribeToAvUser,
+    getAvUserSnapshot,
+    getAvUserServerSnapshot,
+  );
+  const user = useMemo<AvUser | null>(() => {
+    try {
+      return rawUser ? JSON.parse(rawUser) : null;
+    } catch {
+      return null;
+    }
+  }, [rawUser]);
 
   const isActive = (name: "biblioteca" | "salon" | "auth") => {
     if (name === "biblioteca") {
