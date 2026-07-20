@@ -12,16 +12,10 @@ Arcade Vault — plataforma para jugar online y competir por puntuación. Está 
 
 This repo pins `next@16.2.10`, `react@19.2.4`. Next.js 16 has breaking changes vs. earlier versions you may know from training data (Turbopack is now the default bundler for `dev`/`build`, `middleware` renamed to `proxy`, Cache Components, etc.). **Before writing code that touches routing, config, caching, middleware, or build behavior, read the relevant doc under `node_modules/next/dist/docs/`** (organized as `01-app/01-getting-started`, `02-guides`, `03-api-reference`, etc.) rather than relying on prior knowledge. `node_modules/next/dist/docs/01-app/02-guides/upgrading/version-16.md` covers the 15→16 breaking changes specifically.
 
-## Commands
-
-```bash
-npm run dev      # start dev server (Turbopack, default in Next 16)
-npm run build    # production build (Turbopack by default)
-npm run start    # run production build
-npm run lint      # ESLint via eslint-config-next (flat config)
-```
-
 No test runner is configured yet.
+
+## Skills
+Usa siempre /fronend-design para diseñar interfaces de usuario.
 
 ## Architecture
 
