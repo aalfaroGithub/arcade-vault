@@ -1,6 +1,6 @@
 # SPEC 01 — MVP visual de Arcade Vault
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** —
 > **Date:** 2026-07-20
 > **Objective:** Implementar, solo a nivel visual y con rutas reales de Next.js App Router, las 5 pantallas del prototipo (biblioteca, detalle, reproductor, auth, salón de la fama) reproduciendo el diseño de `references/templates/`.
@@ -90,21 +90,21 @@ Convenciones:
 ## Acceptance criteria
 
 - [x] `/` muestra la Biblioteca: hero, buscador funcional (filtra por título), chips de categoría funcionales (filtran por `cat`) y grid de tarjetas de juego.
-- [ ] Cada tarjeta de juego enlaza a `/game/[id]` con el `id` correcto.
-- [ ] `/game/[id]` muestra portada, descripción, tags, estadísticas y la tabla de mejores puntuaciones para ese juego.
+- [x] Cada tarjeta de juego enlaza a `/game/[id]` con el `id` correcto.
+- [x] `/game/[id]` muestra portada, descripción, tags, estadísticas y la tabla de mejores puntuaciones para ese juego.
 - [x] El botón "Jugar ahora" en `/game/[id]` navega a `/game/[id]/play`.
-- [ ] `/game/[id]/play` muestra el HUD y la pantalla CRT, con la puntuación incrementándose automáticamente mientras no está en pausa ni terminado.
-- [ ] Pulsar "Pausa" detiene el incremento de puntuación y muestra el overlay "EN PAUSA"; "Reanudar" lo retoma.
-- [ ] Pulsar "Fin" abre el modal de fin de partida mostrando la puntuación final.
-- [ ] Guardar la puntuación en el modal persiste un registro en `localStorage` y muestra el mensaje de confirmación.
+- [x] `/game/[id]/play` muestra el HUD y la pantalla CRT, con la puntuación incrementándose automáticamente mientras no está en pausa ni terminado.
+- [x] Pulsar "Pausa" detiene el incremento de puntuación y muestra el overlay "EN PAUSA"; "Reanudar" lo retoma.
+- [x] Pulsar "Fin" abre el modal de fin de partida mostrando la puntuación final.
+- [x] Guardar la puntuación en el modal persiste un registro en `localStorage` y muestra el mensaje de confirmación.
 - [x] `/auth` permite alternar entre "Iniciar sesión" y "Crear cuenta", y ambos formularios, al enviarse, guardan un usuario mock en `localStorage`, actualizan el Nav y redirigen a `/`.
-- [ ] "Jugar como invitado" en `/auth` navega a `/` sin crear sesión.
-- [ ] Con sesión activa, el Nav muestra el nombre de usuario en vez del botón "Iniciar sesión"; cerrar sesión limpia `localStorage` y vuelve a mostrar el botón.
-- [ ] `/hall-of-fame` muestra tabs por juego, podio (top 3) y tabla completa de puntuaciones para el juego seleccionado.
-- [ ] Con sesión activa, `/hall-of-fame` muestra una fila adicional "tu mejor marca"; sin sesión, no aparece.
-- [ ] El menú hamburguesa funciona en viewport móvil (< 840px) y da acceso a las mismas rutas que el Nav de escritorio.
-- [ ] No quedan restos visuales del boilerplate de `create-next-app` (logos de Next.js/Vercel, textos por defecto) en ninguna ruta.
-- [ ] El proyecto compila y corre sin errores de consola en las 5 rutas (`npm run dev`).
+- [x] "Jugar como invitado" en `/auth` navega a `/` sin crear sesión.
+- [x] Con sesión activa, el Nav muestra el nombre de usuario en vez del botón "Iniciar sesión"; cerrar sesión limpia `localStorage` y vuelve a mostrar el botón.
+- [x] `/hall-of-fame` muestra tabs por juego, podio (top 3) y tabla completa de puntuaciones para el juego seleccionado.
+- [x] Con sesión activa, `/hall-of-fame` muestra una fila adicional "tu mejor marca"; sin sesión, no aparece.
+- [x] El menú hamburguesa funciona en viewport móvil (< 840px) y da acceso a las mismas rutas que el Nav de escritorio.
+- [x] No quedan restos visuales del boilerplate de `create-next-app` (logos de Next.js/Vercel, textos por defecto) en ninguna ruta.
+- [x] El proyecto compila y corre sin errores de consola en las 5 rutas (`npm run dev`).
 
 ## Decisions
 
