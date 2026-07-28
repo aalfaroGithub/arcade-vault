@@ -9,7 +9,7 @@
 
 **In:**
 
-- Nuevo Route Handler `app/api/contact/route.ts` (POST): recibe `{ name, email, msg }`, valida en servidor (campos no vacíos, formato de email), llama a Resend para enviar un correo a `jorgeandres.alfaroalfaro@gmail.com` con asunto fijo "Nuevo mensaje de contacto — Arcade Vault", `reply-to` = email del usuario, remitente `onboarding@resend.dev`, y devuelve éxito/error en JSON.
+- Nuevo Route Handler `app/api/contact/route.ts` (POST): recibe `{ name, email, msg }`, valida en servidor (campos no vacíos, formato de email), llama a Resend para enviar un correo a `jrgandrescursos@gmail.com` con asunto fijo "Nuevo mensaje de contacto — Arcade Vault", `reply-to` = email del usuario, remitente `onboarding@resend.dev`, y devuelve éxito/error en JSON.
 - Instalar dependencia `resend` (paquete oficial de Node/TS).
 - Variable de entorno `RESEND_API_KEY` en `.env.local` (no versionado; `.env*` ya está en `.gitignore`).
 - Actualizar `app/about/page.tsx`: el `onSubmit` agrega validación de formato de email (además de "no vacío"), hace `fetch("/api/contact", ...)`, maneja tres estados — `idle`, `loading` (botón deshabilitado con texto "ENVIANDO…"), `error` (mensaje inline bajo el botón + el formulario conserva los datos para reintentar) — y solo pasa a la terminal de éxito simulada (`sent`) si la API responde éxito.
@@ -46,16 +46,16 @@ type ContactResponse =
 ## Implementation plan
 
 1. Instalar la dependencia `resend` (`npm install resend`) y agregar `RESEND_API_KEY` a `.env.local` (creado localmente, no versionado).
-2. Crear `app/api/contact/route.ts` con el `POST` handler: valida `name`/`email`/`msg` (no vacíos, `email` con formato válido), instancia el cliente de Resend con `process.env.RESEND_API_KEY`, envía el correo (`from: "onboarding@resend.dev"`, `to: "jorgeandres.alfaroalfaro@gmail.com"`, `reply_to: email`, `subject: "Nuevo mensaje de contacto — Arcade Vault"`, cuerpo con `name`/`email`/`msg`), y responde `{ ok: true }` o `{ ok: false, error }` con el status HTTP correspondiente (400 validación, 500 fallo de envío).
+2. Crear `app/api/contact/route.ts` con el `POST` handler: valida `name`/`email`/`msg` (no vacíos, `email` con formato válido), instancia el cliente de Resend con `process.env.RESEND_API_KEY`, envía el correo (`from: "onboarding@resend.dev"`, `to: "jrgandrescursos@gmail.com"`, `reply_to: email`, `subject: "Nuevo mensaje de contacto — Arcade Vault"`, cuerpo con `name`/`email`/`msg`), y responde `{ ok: true }` o `{ ok: false, error }` con el status HTTP correspondiente (400 validación, 500 fallo de envío).
 3. Actualizar `app/about/page.tsx`: reemplazar el `onSubmit` actual (que solo hacía `setSent` local) por una versión async que valida formato de email client-side, gestiona estado `status: "idle" | "loading" | "error"` además del `sent` existente, llama a `fetch("/api/contact", { method: "POST", body: JSON.stringify(form) })`, y según la respuesta: éxito → `setSent(...)` (comportamiento actual), error/excepción → `status = "error"` con mensaje inline, sin perder los datos del formulario.
 4. Actualizar el JSX del formulario: botón deshabilitado + texto "ENVIANDO…" cuando `status === "loading"`; bloque de mensaje de error inline (bajo el botón) cuando `status === "error"`.
-5. Prueba manual end-to-end en `npm run dev`: enviar el formulario con `RESEND_API_KEY` válida y confirmar que llega el correo a `jorgeandres.alfaroalfaro@gmail.com` con el `reply-to` correcto; simular un fallo (API key inválida o vacía) y confirmar que se muestra el estado de error sin romper la app.
+5. Prueba manual end-to-end en `npm run dev`: enviar el formulario con `RESEND_API_KEY` válida y confirmar que llega el correo a `jrgandrescursos@gmail.com` con el `reply-to` correcto; simular un fallo (API key inválida o vacía) y confirmar que se muestra el estado de error sin romper la app.
 
 ## Acceptance criteria
 
 - [x] `npm install resend` agrega la dependencia al `package.json`.
 - [x] Existe `app/api/contact/route.ts` con un `POST` handler que valida `name`, `email` (formato válido) y `msg` no vacíos, devolviendo `400` con `{ ok: false, error }` si falla la validación.
-- [x] Con `RESEND_API_KEY` válida, enviar el formulario en `/about` con todos los campos completos y email válido dispara un correo real a `jorgeandres.alfaroalfaro@gmail.com`, con `reply-to` igual al email ingresado y asunto "Nuevo mensaje de contacto — Arcade Vault".
+- [x] Con `RESEND_API_KEY` válida, enviar el formulario en `/about` con todos los campos completos y email válido dispara un correo real a `jrgandrescursos@gmail.com`, con `reply-to` igual al email ingresado y asunto "Nuevo mensaje de contacto — Arcade Vault".
 - [x] Si Resend falla (API key inválida/ausente, error de red, etc.), el endpoint responde `500` con `{ ok: false, error }` sin exponer detalles internos (stack, mensaje crudo de Resend).
 - [x] En `/about`, mientras la request está en curso, el botón de envío se deshabilita y muestra "ENVIANDO…".
 - [x] En `/about`, si el envío falla, se muestra un mensaje de error inline bajo el botón y el formulario conserva los datos ingresados (no se limpia, no avanza al estado "enviado").
@@ -66,7 +66,7 @@ type ContactResponse =
 
 ## Decisions
 
-- **Sí:** solo se notifica al equipo (`jorgeandres.alfaroalfaro@gmail.com`); no se envía confirmación al usuario. Decisión explícita del usuario — mantiene el flujo simple, sin duplicar templates de correo.
+- **Sí:** solo se notifica al equipo (`jrgandrescursos@gmail.com`); no se envía confirmación al usuario. Decisión explícita del usuario — mantiene el flujo simple, sin duplicar templates de correo.
 - **Sí:** se usa un Route Handler (`app/api/contact/route.ts`) en vez de una Server Action. Decisión explícita del usuario; mantiene el envío de Resend explícitamente server-side y el contrato HTTP explícito, consistente con `fetch` desde el cliente.
 - **Sí:** se usa el remitente de pruebas `onboarding@resend.dev` en vez de un dominio propio verificado. Decisión explícita del usuario — no hay dominio propio configurado en Resend todavía; queda fuera de scope verificarlo.
 - **Sí:** el estado de "enviado" (terminal de éxito) solo se muestra tras confirmación real del servidor, reemplazando el comportamiento anterior (spec 02) donde era una simulación puramente visual sin backend. Decisión explícita del usuario.
