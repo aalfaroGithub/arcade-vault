@@ -1,6 +1,6 @@
 # SPEC 02 — Home (landing) y Acerca de
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** 01-mvp-visual
 > **Date:** 2026-07-28
 > **Objective:** Introducir una landing page real en `/` (hero, features, preview de juegos, stats, actividad en vivo, pricing, CTA final) y una página `/about` con contacto simulado, moviendo la Biblioteca actual de `/` a `/games` y actualizando la navegación, reproduciendo `references/templates/home-about/`.
@@ -67,19 +67,19 @@ Uso en el Home:
 
 ## Acceptance criteria
 
-- [ ] `/` muestra el nuevo Home: hero con silhouettes flotantes y CTAs, sección "¿Por qué Arcade Vault?", preview de juegos, stats, "Actividad en vivo", "Top jugadores hoy", pricing/FAQ y CTA final.
-- [ ] Los CTAs del Home que en el prototipo navegaban a "biblioteca" (hero, preview de juegos, CTA final) enlazan a `/games`; los que navegaban a "auth" (hero, pricing) enlazan a `/auth`.
-- [ ] La sección "Juegos disponibles ahora" muestra los primeros 6 juegos de `GAMES` y cada tarjeta enlaza a `/game/[id]` con el `id` correcto.
-- [ ] "Top jugadores hoy" y "Actividad en vivo" muestran datos generados a partir de `PLAYERS`/`seededScores`/`seededActivity`, no arrays hardcodeados.
-- [ ] `/games` reproduce exactamente la funcionalidad que hoy tiene `/` (hero, buscador funcional, chips de categoría funcionales, grid de tarjetas enlazando a `/game/[id]`).
-- [ ] `/about` muestra hero/misión, highlights y formulario de contacto.
-- [ ] En `/about`, enviar el formulario con algún campo vacío dispara la animación "shake" y no avanza al estado "enviado".
-- [ ] En `/about`, enviar el formulario con todos los campos completos muestra la terminal de éxito simulada con el nombre ingresado, y "Enviar otro mensaje" reinicia el formulario.
-- [ ] El Nav (desktop y menú móvil) muestra 4 links — Inicio, Biblioteca, Salón de la Fama, Acerca de — y cada uno resalta como activo en su ruta correspondiente (`/`, `/games` y `/game/*`, `/hall-of-fame`, `/about`).
-- [ ] El logo del Nav navega a `/`.
-- [ ] El link "Volver a la Biblioteca" en `/hall-of-fame` (y cualquier otro equivalente encontrado en el paso 7 del plan) apunta a `/games`, no a `/`.
-- [ ] No quedan enlaces internos que dependan de la semántica anterior de `/` como Biblioteca.
-- [ ] El proyecto compila y corre sin errores de consola en `/`, `/games`, `/about` y el resto de rutas existentes (`npm run dev`).
+- [x] `/` muestra el nuevo Home: hero con silhouettes flotantes y CTAs, sección "¿Por qué Arcade Vault?", preview de juegos, stats, "Actividad en vivo", "Top jugadores hoy", pricing/FAQ y CTA final.
+- [x] Los CTAs del Home que en el prototipo navegaban a "biblioteca" (hero, preview de juegos, CTA final) enlazan a `/games`; los que navegaban a "auth" (hero, pricing) enlazan a `/auth`.
+- [x] La sección "Juegos disponibles ahora" muestra los primeros 6 juegos de `GAMES` y cada tarjeta enlaza a `/game/[id]` con el `id` correcto.
+- [x] "Top jugadores hoy" y "Actividad en vivo" muestran datos generados a partir de `PLAYERS`/`seededScores`/`seededActivity`, no arrays hardcodeados.
+- [x] `/games` reproduce exactamente la funcionalidad que hoy tiene `/` (hero, buscador funcional, chips de categoría funcionales, grid de tarjetas enlazando a `/game/[id]`).
+- [x] `/about` muestra hero/misión, highlights y formulario de contacto.
+- [x] En `/about`, enviar el formulario con algún campo vacío dispara la animación "shake" y no avanza al estado "enviado".
+- [x] En `/about`, enviar el formulario con todos los campos completos muestra la terminal de éxito simulada con el nombre ingresado, y "Enviar otro mensaje" reinicia el formulario.
+- [x] El Nav (desktop y menú móvil) muestra 4 links — Inicio, Biblioteca, Salón de la Fama, Acerca de — y cada uno resalta como activo en su ruta correspondiente (`/`, `/games` y `/game/*`, `/hall-of-fame`, `/about`).
+- [x] El logo del Nav navega a `/`.
+- [x] El link "Volver a la Biblioteca" en `/hall-of-fame` (y cualquier otro equivalente encontrado en el paso 7 del plan) apunta a `/games`, no a `/`.
+- [x] No quedan enlaces internos que dependan de la semántica anterior de `/` como Biblioteca.
+- [x] El proyecto compila y corre sin errores de consola en `/`, `/games`, `/about` y el resto de rutas existentes (`npm run dev`).
 
 ## Decisions
 
