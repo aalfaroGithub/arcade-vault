@@ -85,21 +85,41 @@ interface ContactForm {
 
 const EMPTY_FORM: ContactForm = { name: "", email: "", msg: "" };
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export default function AboutPage() {
   useReveal();
 
   const [form, setForm] = useState<ContactForm>(EMPTY_FORM);
   const [sent, setSent] = useState<string | null>(null);
   const [shake, setShake] = useState(false);
+  const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!form.name.trim() || !form.email.trim() || !form.msg.trim()) {
+    if (!form.name.trim() || !form.email.trim() || !form.msg.trim() || !EMAIL_RE.test(form.email.trim())) {
       setShake(true);
       setTimeout(() => setShake(false), 400);
       return;
     }
-    setSent(form.name.trim());
+
+    setStatus("loading");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = (await res.json()) as { ok: boolean };
+      if (!res.ok || !data.ok) {
+        setStatus("error");
+        return;
+      }
+      setStatus("idle");
+      setSent(form.name.trim());
+    } catch {
+      setStatus("error");
+    }
   };
 
   return (
