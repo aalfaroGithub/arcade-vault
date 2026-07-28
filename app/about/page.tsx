@@ -207,9 +207,19 @@ export default function AboutPage() {
                     placeholder="Cuéntanos qué tienes en mente…"
                   ></textarea>
                 </div>
-                <button className="btn xl press" type="submit" style={{ width: "100%" }}>
-                  ▶ ENVIAR MENSAJE
+                <button
+                  className="btn xl press"
+                  type="submit"
+                  style={{ width: "100%" }}
+                  disabled={status === "loading"}
+                >
+                  {status === "loading" ? "ENVIANDO…" : "▶ ENVIAR MENSAJE"}
                 </button>
+                {status === "error" && (
+                  <div className="contact-error" role="alert">
+                    No se pudo enviar el mensaje. Intenta de nuevo.
+                  </div>
+                )}
               </>
             ) : (
               <div className="terminal-success">

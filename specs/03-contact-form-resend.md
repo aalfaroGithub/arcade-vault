@@ -1,6 +1,6 @@
 # SPEC 03 — Envío real del formulario de contacto con Resend
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** 02-home-about
 > **Date:** 2026-07-28
 > **Objective:** Implementar el envío real del formulario de contacto de `/about` mediante un Route Handler (`/api/contact`) que use Resend para notificar por correo al equipo, con estados de carga y error en la UI.
@@ -53,16 +53,16 @@ type ContactResponse =
 
 ## Acceptance criteria
 
-- [ ] `npm install resend` agrega la dependencia al `package.json`.
-- [ ] Existe `app/api/contact/route.ts` con un `POST` handler que valida `name`, `email` (formato válido) y `msg` no vacíos, devolviendo `400` con `{ ok: false, error }` si falla la validación.
-- [ ] Con `RESEND_API_KEY` válida, enviar el formulario en `/about` con todos los campos completos y email válido dispara un correo real a `jorgeandres.alfaroalfaro@gmail.com`, con `reply-to` igual al email ingresado y asunto "Nuevo mensaje de contacto — Arcade Vault".
-- [ ] Si Resend falla (API key inválida/ausente, error de red, etc.), el endpoint responde `500` con `{ ok: false, error }` sin exponer detalles internos (stack, mensaje crudo de Resend).
-- [ ] En `/about`, mientras la request está en curso, el botón de envío se deshabilita y muestra "ENVIANDO…".
-- [ ] En `/about`, si el envío falla, se muestra un mensaje de error inline bajo el botón y el formulario conserva los datos ingresados (no se limpia, no avanza al estado "enviado").
-- [ ] En `/about`, enviar con un email de formato inválido (ej. `"abc"`) dispara la animación "shake" existente y no llama al endpoint.
-- [ ] En `/about`, solo se muestra la terminal de éxito simulada (`sent`) cuando la API respondió éxito, no antes.
-- [ ] `.env.local` con `RESEND_API_KEY` no queda versionado (confirmado por `.gitignore` existente `.env*`).
-- [ ] El proyecto compila y corre sin errores de consola (`npm run dev`) en `/about` y el resto de rutas.
+- [x] `npm install resend` agrega la dependencia al `package.json`.
+- [x] Existe `app/api/contact/route.ts` con un `POST` handler que valida `name`, `email` (formato válido) y `msg` no vacíos, devolviendo `400` con `{ ok: false, error }` si falla la validación.
+- [x] Con `RESEND_API_KEY` válida, enviar el formulario en `/about` con todos los campos completos y email válido dispara un correo real a `jorgeandres.alfaroalfaro@gmail.com`, con `reply-to` igual al email ingresado y asunto "Nuevo mensaje de contacto — Arcade Vault".
+- [x] Si Resend falla (API key inválida/ausente, error de red, etc.), el endpoint responde `500` con `{ ok: false, error }` sin exponer detalles internos (stack, mensaje crudo de Resend).
+- [x] En `/about`, mientras la request está en curso, el botón de envío se deshabilita y muestra "ENVIANDO…".
+- [x] En `/about`, si el envío falla, se muestra un mensaje de error inline bajo el botón y el formulario conserva los datos ingresados (no se limpia, no avanza al estado "enviado").
+- [x] En `/about`, enviar con un email de formato inválido (ej. `"abc"`) dispara la animación "shake" existente y no llama al endpoint.
+- [x] En `/about`, solo se muestra la terminal de éxito simulada (`sent`) cuando la API respondió éxito, no antes.
+- [x] `.env.local` con `RESEND_API_KEY` no queda versionado (confirmado por `.gitignore` existente `.env*`).
+- [x] El proyecto compila y corre sin errores de consola (`npm run dev`) en `/about` y el resto de rutas.
 
 ## Decisions
 
