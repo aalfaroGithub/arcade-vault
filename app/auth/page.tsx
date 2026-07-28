@@ -14,10 +14,10 @@ export default function AuthPage() {
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     writeAvUser({ name: (user || "PLAYER1").toUpperCase().slice(0, 10) });
-    router.push("/");
+    router.push("/games");
   };
 
-  const playAsGuest = () => router.push("/");
+  const playAsGuest = () => router.push("/games");
 
   return (
     <div className="av-auth-wrap fade-in">
