@@ -303,7 +303,19 @@ class Particle {
 
 type GameState = "playing" | "dead" | "gameover";
 
-export default function Asteroids() {
+export interface AsteroidsProps {
+  onStateChange: (state: {
+    score: number;
+    lives: number;
+    level: number;
+  }) => void;
+  onGameOver: (finalScore: number) => void;
+}
+
+export default function Asteroids({
+  onStateChange,
+  onGameOver,
+}: AsteroidsProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
@@ -351,6 +363,11 @@ export default function Asteroids() {
     let deadTimer = 0;
     let powerUpSpawned = false;
     let killsSinceSpawn = 0;
+
+    let lastReportedScore = -1;
+    let lastReportedLives = -1;
+    let lastReportedLevel = -1;
+    let gameOverReported = false;
 
     function spawnAsteroids(count: number) {
       const SAFE_DIST = 130;
@@ -482,6 +499,24 @@ export default function Asteroids() {
       if (asteroids.length === 0) nextLevel();
     }
 
+    function reportState() {
+      if (
+        score !== lastReportedScore ||
+        lives !== lastReportedLives ||
+        level !== lastReportedLevel
+      ) {
+        lastReportedScore = score;
+        lastReportedLives = lives;
+        lastReportedLevel = level;
+        onStateChange({ score, lives, level });
+      }
+      if (state === "gameover" && !gameOverReported) {
+        gameOverReported = true;
+        onGameOver(score);
+      }
+      if (state !== "gameover") gameOverReported = false;
+    }
+
     function drawLifeIcon(x: number, y: number) {
       ctx!.save();
       ctx!.translate(x, y);
@@ -554,6 +589,7 @@ export default function Asteroids() {
       const dt = lastTime === null ? 0 : Math.min((ts - lastTime) / 1000, 0.05);
       lastTime = ts;
       update(dt);
+      reportState();
       draw();
       rafId = requestAnimationFrame(loop);
     }
