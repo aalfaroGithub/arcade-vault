@@ -43,7 +43,11 @@ export interface ActivityEntry {
 
 // Recorre GAMES cíclicamente, usa el mismo generador pseudoaleatorio
 // determinista que seededScores, y compone timeAgo como `hace ${(i+1)*3} min`.
-export function seededActivity(seed: number, games: Game[], count?: number): ActivityEntry[];
+export function seededActivity(
+  seed: number,
+  games: Game[],
+  count?: number,
+): ActivityEntry[];
 ```
 
 Uso en el Home:

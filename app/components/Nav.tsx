@@ -66,7 +66,9 @@ export default function Nav() {
   const [open, setOpen] = useState(false);
   const user = useAvUser();
 
-  const isActive = (name: "home" | "biblioteca" | "salon" | "about" | "auth") => {
+  const isActive = (
+    name: "home" | "biblioteca" | "salon" | "about" | "auth",
+  ) => {
     if (name === "home") return pathname === "/";
     if (name === "biblioteca") return pathname.startsWith("/game");
     if (name === "salon") return pathname.startsWith("/hall-of-fame");
@@ -95,7 +97,10 @@ export default function Nav() {
           <Link href="/" className={isActive("home") ? "active" : ""}>
             Inicio
           </Link>
-          <Link href="/games" className={isActive("biblioteca") ? "active" : ""}>
+          <Link
+            href="/games"
+            className={isActive("biblioteca") ? "active" : ""}
+          >
             Biblioteca
           </Link>
           <Link
@@ -136,13 +141,24 @@ export default function Nav() {
         onClick={() => setOpen(false)}
       ></div>
       <aside className={"av-mobile-panel" + (open ? " open" : "")}>
-        <div className="pixel neon-cyan" style={{ fontSize: 11, marginBottom: 16 }}>
+        <div
+          className="pixel neon-cyan"
+          style={{ fontSize: 11, marginBottom: 16 }}
+        >
           MENÚ
         </div>
-        <Link href="/" className={isActive("home") ? "active" : ""} onClick={() => setOpen(false)}>
+        <Link
+          href="/"
+          className={isActive("home") ? "active" : ""}
+          onClick={() => setOpen(false)}
+        >
           Inicio
         </Link>
-        <Link href="/games" className={isActive("biblioteca") ? "active" : ""} onClick={() => setOpen(false)}>
+        <Link
+          href="/games"
+          className={isActive("biblioteca") ? "active" : ""}
+          onClick={() => setOpen(false)}
+        >
           Biblioteca
         </Link>
         <Link
@@ -152,7 +168,11 @@ export default function Nav() {
         >
           Salón de la Fama
         </Link>
-        <Link href="/about" className={isActive("about") ? "active" : ""} onClick={() => setOpen(false)}>
+        <Link
+          href="/about"
+          className={isActive("about") ? "active" : ""}
+          onClick={() => setOpen(false)}
+        >
           Acerca de
         </Link>
         <Link
@@ -165,7 +185,11 @@ export default function Nav() {
         <div style={{ flex: 1 }}></div>
         <div
           className="pixel"
-          style={{ fontSize: 9, color: "var(--ink-faint)", letterSpacing: "0.16em" }}
+          style={{
+            fontSize: 9,
+            color: "var(--ink-faint)",
+            letterSpacing: "0.16em",
+          }}
         >
           CRÉDITOS · 03
         </div>

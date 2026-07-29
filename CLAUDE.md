@@ -15,6 +15,7 @@ This repo pins `next@16.2.10`, `react@19.2.4`. Next.js 16 has breaking changes v
 No test runner is configured yet.
 
 ## Skills
+
 Usa siempre /fronend-design para diseñar interfaces de usuario.
 
 ## Architecture
