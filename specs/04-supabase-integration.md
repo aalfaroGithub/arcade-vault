@@ -1,6 +1,6 @@
 # SPEC 04 — Integración base de Supabase
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** —
 > **Date:** 2026-07-29
 > **Objective:** Integrar el SDK de Supabase en la aplicación Next.js (clientes browser y server, variables de entorno, endpoint de diagnóstico) sin implementar Auth ni crear tablas.
@@ -47,15 +47,15 @@ Los helpers `lib/supabase/client.ts` y `lib/supabase/server.ts` no introducen ti
 
 ## Acceptance criteria
 
-- [ ] `npm install @supabase/supabase-js @supabase/ssr` agrega ambas dependencias al `package.json`.
-- [ ] `.env.template` incluye los placeholders `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
-- [ ] `.env.local` con los valores reales no queda versionado (confirmado por `.gitignore` existente `.env*`).
-- [ ] Existe `lib/supabase/client.ts` exportando `createClient()` para uso en Client Components.
-- [ ] Existe `lib/supabase/server.ts` exportando `createClient()` (async) para uso en Server Components/Route Handlers.
-- [ ] Existe `app/api/health/supabase/route.ts` con un `GET` handler.
-- [ ] Visitar `/api/health/supabase` con `npm run dev` y credenciales válidas en `.env.local` responde `{ ok: true }` (200).
-- [ ] Si las credenciales son inválidas o falta la env var, el endpoint responde `{ ok: false, error }` (500) sin exponer stack ni detalles internos de Supabase.
-- [ ] El proyecto compila y corre sin errores de consola (`npm run dev`) en todas las rutas existentes, incluyendo `app/auth/page.tsx` (sin cambios).
+- [x] `npm install @supabase/supabase-js @supabase/ssr` agrega ambas dependencias al `package.json`.
+- [x] `.env.template` incluye los placeholders `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
+- [x] `.env.local` con los valores reales no queda versionado (confirmado por `.gitignore` existente `.env*`).
+- [x] Existe `lib/supabase/client.ts` exportando `createClient()` para uso en Client Components.
+- [x] Existe `lib/supabase/server.ts` exportando `createClient()` (async) para uso en Server Components/Route Handlers.
+- [x] Existe `app/api/health/supabase/route.ts` con un `GET` handler.
+- [x] Visitar `/api/health/supabase` con `npm run dev` y credenciales válidas en `.env.local` responde `{ ok: true }` (200).
+- [ ] Si las credenciales son inválidas o falta la env var, el endpoint responde `{ ok: false, error }` (500) sin exponer stack ni detalles internos de Supabase. _(no verificado manualmente en esta sesión)_
+- [x] El proyecto compila y corre sin errores de consola (`npm run dev`) en todas las rutas existentes, incluyendo `app/auth/page.tsx` (sin cambios).
 
 ## Decisions
 
