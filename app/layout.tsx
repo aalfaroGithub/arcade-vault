@@ -25,7 +25,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={`${pixelFont.variable} ${monoFont.variable} h-full antialiased`}>
+    <html
+      lang="es"
+      className={`${pixelFont.variable} ${monoFont.variable} h-full antialiased`}
+    >
       <body>
         <div className="av-bg" />
         <div className="av-noise" />

@@ -41,19 +41,25 @@ export interface Game {
   short: string;
   long: string;
   cat: GameCategory;
-  cover: string;   // clase CSS de portada, p. ej. "cover-bricks"
+  cover: string; // clase CSS de portada, p. ej. "cover-bricks"
   color: "cyan" | "magenta" | "yellow" | "green";
   best: number;
   plays: string;
 }
 
-export const GAMES: Game[] = [ /* 8 juegos, migrados de data.jsx */ ];
-export const CATEGORIES: Array<"TODOS" | GameCategory> = ["TODOS", "ARCADE", "PUZZLE", "SHOOTER", "VERSUS"];
+export const GAMES: Game[] = [/* 8 juegos, migrados de data.jsx */];
+export const CATEGORIES: Array<"TODOS" | GameCategory> = [
+  "TODOS",
+  "ARCADE",
+  "PUZZLE",
+  "SHOOTER",
+  "VERSUS",
+];
 ```
 
 ```ts
 // app/data/players.ts
-export const PLAYERS: string[] = [ /* 18 nombres, migrados de data.jsx */ ];
+export const PLAYERS: string[] = [/* 18 nombres, migrados de data.jsx */];
 ```
 
 ```ts

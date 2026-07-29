@@ -26,7 +26,8 @@ export default function HallOfFameTable({
         <div
           key={r.name + i}
           className={
-            "tr" + (i === 0 ? " top1" : i === 1 ? " top2" : i === 2 ? " top3" : "")
+            "tr" +
+            (i === 0 ? " top1" : i === 1 ? " top2" : i === 2 ? " top3" : "")
           }
           style={{ animationDelay: `${i * 50}ms` }}
         >

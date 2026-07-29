@@ -36,9 +36,7 @@ interface ContactRequestBody {
   msg: string;
 }
 
-type ContactResponse =
-  | { ok: true }
-  | { ok: false; error: string }; // mensaje genérico, sin detalles internos
+type ContactResponse = { ok: true } | { ok: false; error: string }; // mensaje genérico, sin detalles internos
 ```
 
 `ContactForm` (ya existente en `app/about/page.tsx`) se reutiliza tal cual como el shape que se envía en el `fetch`.

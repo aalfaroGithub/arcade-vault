@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import HallOfFamePodium from "../components/HallOfFamePodium";
-import HallOfFameTable, { type YourBestMark } from "../components/HallOfFameTable";
+import HallOfFameTable, {
+  type YourBestMark,
+} from "../components/HallOfFameTable";
 import { useAvUser } from "../components/Nav";
 import { GAMES } from "../data/games";
 import { seededScores } from "../data/scores";
