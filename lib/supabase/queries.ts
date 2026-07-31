@@ -58,3 +58,33 @@ export async function getPlayerBest(
 
   return data;
 }
+
+export async function getGameStats(
+  gameId: string,
+): Promise<{ plays: number; best: number }> {
+  const supabase = createClient();
+
+  const [{ count, error: countError }, { data: topScore, error: bestError }] =
+    await Promise.all([
+      supabase
+        .from("scores")
+        .select("*", { count: "exact", head: true })
+        .eq("game_id", gameId),
+      supabase
+        .from("scores")
+        .select("score")
+        .eq("game_id", gameId)
+        .order("score", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+    ]);
+
+  if (countError) {
+    throw countError;
+  }
+  if (bestError) {
+    throw bestError;
+  }
+
+  return { plays: count ?? 0, best: topScore?.score ?? 0 };
+}

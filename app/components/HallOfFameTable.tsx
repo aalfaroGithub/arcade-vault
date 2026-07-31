@@ -22,7 +22,7 @@ export default function HallOfFameTable({
         <div>PUNTUACIÓN</div>
         <div>FECHA</div>
       </div>
-      {rows.length < 3 ? (
+      {rows.length === 0 ? (
         <div
           className="tr"
           style={{
