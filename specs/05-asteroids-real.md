@@ -1,6 +1,6 @@
 # SPEC 05 — Asteroids real en el reproductor
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** 01-mvp-visual
 > **Date:** 2026-07-29
 > **Objective:** Portar el juego de referencia `references/started-games/02-asteroids/game.js` a un componente React (canvas) que reemplaza la simulación visual del `GamePlayer` para Asteroids, sirviéndolo desde su propia ruta (`/game/asteroids` para el detalle, `/game/asteroids/play` para jugar) en vez de la ruta genérica dinámica, sincronizando score/vidas/nivel/game-over con el HUD real de React.
