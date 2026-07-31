@@ -646,7 +646,19 @@ const Asteroids = forwardRef<AsteroidsHandle, AsteroidsProps>(
       };
     }, []);
 
-    return <canvas ref={canvasRef} width={W} height={H} />;
+    return (
+      <canvas
+        ref={canvasRef}
+        width={W}
+        height={H}
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+        }}
+      />
+    );
   },
 );
 
