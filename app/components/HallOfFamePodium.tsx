@@ -1,6 +1,26 @@
 import type { ScoreEntry } from "../data/scores";
 
 export default function HallOfFamePodium({ rows }: { rows: ScoreEntry[] }) {
+  if (rows.length < 3) {
+    return (
+      <div className="podium">
+        <div
+          className="pixel"
+          style={{
+            gridColumn: "1 / -1",
+            textAlign: "center",
+            padding: "24px 0",
+            color: "var(--ink-dim)",
+            fontSize: 12,
+            letterSpacing: "0.12em",
+          }}
+        >
+          AÚN NO HAY PUNTUACIONES
+        </div>
+      </div>
+    );
+  }
+
   const [first, second, third] = rows;
 
   return (
