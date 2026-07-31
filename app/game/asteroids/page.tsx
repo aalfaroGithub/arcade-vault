@@ -2,13 +2,19 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Leaderboard from "../../components/Leaderboard";
 import { GAMES } from "../../data/games";
-import { seededScores } from "../../data/scores";
+import { getTopScores } from "@/lib/supabase/queries";
 
 export default async function AsteroidsDetailPage() {
   const game = GAMES.find((g) => g.id === "asteroids");
   if (!game) notFound();
 
-  const scores = seededScores(game.id.length * 17 + 3, 10);
+  const topScores = await getTopScores("asteroids", 10);
+  const scores = topScores.map((row, i) => ({
+    rank: i + 1,
+    name: row.name,
+    score: row.score,
+    date: new Date(row.created_at).toLocaleDateString("es-ES"),
+  }));
 
   return (
     <div className="av-detail fade-in">
