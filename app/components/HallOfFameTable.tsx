@@ -22,21 +22,36 @@ export default function HallOfFameTable({
         <div>PUNTUACIÓN</div>
         <div>FECHA</div>
       </div>
-      {rows.map((r, i) => (
+      {rows.length === 0 ? (
         <div
-          key={r.name + i}
-          className={
-            "tr" +
-            (i === 0 ? " top1" : i === 1 ? " top2" : i === 2 ? " top3" : "")
-          }
-          style={{ animationDelay: `${i * 50}ms` }}
+          className="tr"
+          style={{
+            gridTemplateColumns: "1fr",
+            textAlign: "center",
+            color: "var(--ink-dim)",
+            fontSize: 12,
+            letterSpacing: "0.12em",
+          }}
         >
-          <div className="rk">#{String(r.rank).padStart(2, "0")}</div>
-          <div className="pl">{r.name}</div>
-          <div className="sc">{r.score.toLocaleString("es-ES")}</div>
-          <div className="dt">{r.date}</div>
+          AÚN NO HAY PUNTUACIONES
         </div>
-      ))}
+      ) : (
+        rows.map((r, i) => (
+          <div
+            key={r.name + i}
+            className={
+              "tr" +
+              (i === 0 ? " top1" : i === 1 ? " top2" : i === 2 ? " top3" : "")
+            }
+            style={{ animationDelay: `${i * 50}ms` }}
+          >
+            <div className="rk">#{String(r.rank).padStart(2, "0")}</div>
+            <div className="pl">{r.name}</div>
+            <div className="sc">{r.score.toLocaleString("es-ES")}</div>
+            <div className="dt">{r.date}</div>
+          </div>
+        ))
+      )}
       {you && (
         <>
           <div className="tr you-label">

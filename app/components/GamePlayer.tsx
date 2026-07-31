@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { Game } from "../data/games";
+import { insertScore } from "@/lib/supabase/queries";
 import { readAvUser } from "./Nav";
 import Asteroids, { type AsteroidsHandle } from "./games/Asteroids";
 
@@ -66,6 +67,13 @@ export default function GamePlayer({ game }: { game: Game }) {
   };
 
   const saveScore = () => {
+    if (isAsteroids) {
+      insertScore(game.id, name, score).catch(() => {
+        // fallo de red/Supabase; se ignora en este MVP
+      });
+      setSaved(true);
+      return;
+    }
     try {
       const all = JSON.parse(localStorage.getItem(SCORES_KEY) || "[]");
       all.push({ game: game.id, score, name, at: Date.now() });

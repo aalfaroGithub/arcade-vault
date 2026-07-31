@@ -2,13 +2,22 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Leaderboard from "../../components/Leaderboard";
 import { GAMES } from "../../data/games";
-import { seededScores } from "../../data/scores";
+import { getGameStats, getTopScores } from "@/lib/supabase/queries";
 
 export default async function AsteroidsDetailPage() {
   const game = GAMES.find((g) => g.id === "asteroids");
   if (!game) notFound();
 
-  const scores = seededScores(game.id.length * 17 + 3, 10);
+  const [topScores, stats] = await Promise.all([
+    getTopScores("asteroids", 10),
+    getGameStats("asteroids"),
+  ]);
+  const scores = topScores.map((row, i) => ({
+    rank: i + 1,
+    name: row.name,
+    score: row.score,
+    date: new Date(row.created_at).toLocaleDateString("es-ES"),
+  }));
 
   return (
     <div className="av-detail fade-in">
@@ -28,7 +37,7 @@ export default async function AsteroidsDetailPage() {
           <div className="stat-strip">
             <div>
               <div className="l">Partidas</div>
-              <div className="v">{game.plays}</div>
+              <div className="v">{stats.plays.toLocaleString("es-ES")}</div>
             </div>
             <div>
               <div className="l">Mejor global</div>
@@ -39,7 +48,7 @@ export default async function AsteroidsDetailPage() {
                   textShadow: "0 0 6px rgba(255,0,110,0.5)",
                 }}
               >
-                {game.best.toLocaleString("es-ES")}
+                {stats.best.toLocaleString("es-ES")}
               </div>
             </div>
             <div>
