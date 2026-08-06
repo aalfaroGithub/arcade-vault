@@ -5,13 +5,14 @@ import { useEffect, useRef, useState } from "react";
 import type { Game } from "../data/games";
 import { insertScore } from "@/lib/supabase/queries";
 import { readAvUser } from "./Nav";
-import Asteroids, { type AsteroidsHandle } from "./games/Asteroids";
+import Asteroids from "./games/Asteroids";
+import type { GameHandle } from "./games/types";
 
 const SCORES_KEY = "av_scores";
 
 export default function GamePlayer({ game }: { game: Game }) {
   const isAsteroids = game.id === "asteroids";
-  const asteroidsRef = useRef<AsteroidsHandle>(null);
+  const asteroidsRef = useRef<GameHandle>(null);
   const [resetKey, setResetKey] = useState(0);
 
   const [simScore, setSimScore] = useState(0);
