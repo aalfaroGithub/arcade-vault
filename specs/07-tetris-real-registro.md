@@ -1,6 +1,6 @@
 # SPEC 07 — Tetris real y registro genérico de juegos reales
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** 05-asteroids-real, 06-leaderboard-supabase
 > **Date:** 2026-08-06
 > **Objective:** Portar `references/started-games/03-tetris/game.js` a un componente React (`Tetris.tsx`) para el catálogo id `caida`, introduciendo de paso el registro genérico `app/data/realGames.ts` que reemplaza las 7 bifurcaciones `game.id === "asteroids"` en `GamePlayer.tsx` y la de `app/hall-of-fame/page.tsx`, y conectando su leaderboard a Supabase igual que Asteroids.

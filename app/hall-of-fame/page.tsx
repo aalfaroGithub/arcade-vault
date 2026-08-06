@@ -8,6 +8,7 @@ import HallOfFameTable, {
 } from "../components/HallOfFameTable";
 import { useAvUser } from "../components/Nav";
 import { GAMES } from "../data/games";
+import { REAL_GAMES } from "../data/realGames";
 import { seededScores, type ScoreEntry } from "../data/scores";
 import { getPlayerBest, getTopScores } from "@/lib/supabase/queries";
 
@@ -16,21 +17,21 @@ export default function HallOfFamePage() {
   const user = useAvUser();
 
   const seedRows = useMemo(() => seededScores(tab.length * 23 + 7, 12), [tab]);
-  const [asteroidsRows, setAsteroidsRows] = useState<ScoreEntry[]>([]);
-  const [asteroidsBest, setAsteroidsBest] = useState<{
+  const [realRows, setRealRows] = useState<ScoreEntry[]>([]);
+  const [realBest, setRealBest] = useState<{
     score: number;
     rank: number;
   } | null>(null);
   const game = GAMES.find((g) => g.id === tab)!;
-  const isAsteroids = tab === "asteroids";
+  const isReal = tab in REAL_GAMES;
 
   useEffect(() => {
-    if (!isAsteroids) return;
+    if (!isReal) return;
     let cancelled = false;
 
-    getTopScores("asteroids", 12).then((topScores) => {
+    getTopScores(tab, 12).then((topScores) => {
       if (cancelled) return;
-      setAsteroidsRows(
+      setRealRows(
         topScores.map((row, i) => ({
           rank: i + 1,
           name: row.name,
@@ -41,39 +42,39 @@ export default function HallOfFamePage() {
     });
 
     const bestPromise = user
-      ? getPlayerBest("asteroids", user.name)
+      ? getPlayerBest(tab, user.name)
       : Promise.resolve(null);
 
     bestPromise.then((best) => {
       if (cancelled) return;
-      setAsteroidsBest(best ? { score: best.score, rank: 0 } : null);
+      setRealBest(best ? { score: best.score, rank: 0 } : null);
     });
 
     return () => {
       cancelled = true;
     };
-  }, [isAsteroids, user]);
+  }, [isReal, tab, user]);
 
-  const rows = isAsteroids ? asteroidsRows : seedRows;
+  const rows = isReal ? realRows : seedRows;
 
   const you: YourBestMark | null = useMemo(() => {
     if (!user) return null;
-    if (isAsteroids) {
-      if (!asteroidsBest) return null;
+    if (isReal) {
+      if (!realBest) return null;
       const rank =
-        asteroidsRows.findIndex((r) => r.score === asteroidsBest.score) + 1 ||
-        asteroidsRows.length + 1;
+        realRows.findIndex((r) => r.score === realBest.score) + 1 ||
+        realRows.length + 1;
       return {
         name: user.name,
         rank,
-        score: asteroidsBest.score,
+        score: realBest.score,
         gameTitle: game.title,
       };
     }
     const rank = Math.floor(8 + (tab.length % 4));
     const score = (rows[5]?.score ?? 10000 + 2400) - 2400;
     return { name: user.name, rank, score, gameTitle: game.title };
-  }, [user, tab, rows, game, isAsteroids, asteroidsBest, asteroidsRows]);
+  }, [user, tab, rows, game, isReal, realBest, realRows]);
 
   return (
     <div className="av-hall fade-in">

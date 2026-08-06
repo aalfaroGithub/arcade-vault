@@ -2,14 +2,32 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Leaderboard from "../../components/Leaderboard";
 import { GAMES } from "../../data/games";
+import { REAL_GAMES } from "../../data/realGames";
 import { seededScores } from "../../data/scores";
+import { getGameStats, getTopScores } from "@/lib/supabase/queries";
 
 export default async function GameDetailPage(props: PageProps<"/game/[id]">) {
   const { id } = await props.params;
   const game = GAMES.find((g) => g.id === id);
   if (!game) notFound();
 
-  const scores = seededScores(id.length * 17 + 3, 10);
+  const isReal = id in REAL_GAMES;
+
+  const [topScores, stats] = isReal
+    ? await Promise.all([getTopScores(id, 10), getGameStats(id)])
+    : [null, null];
+
+  const scores = topScores
+    ? topScores.map((row, i) => ({
+        rank: i + 1,
+        name: row.name,
+        score: row.score,
+        date: new Date(row.created_at).toLocaleDateString("es-ES"),
+      }))
+    : seededScores(id.length * 17 + 3, 10);
+
+  const plays = stats ? stats.plays.toLocaleString("es-ES") : game.plays;
+  const best = stats ? stats.best : game.best;
 
   return (
     <div className="av-detail fade-in">
@@ -29,7 +47,7 @@ export default async function GameDetailPage(props: PageProps<"/game/[id]">) {
           <div className="stat-strip">
             <div>
               <div className="l">Partidas</div>
-              <div className="v">{game.plays}</div>
+              <div className="v">{plays}</div>
             </div>
             <div>
               <div className="l">Mejor global</div>
@@ -40,7 +58,7 @@ export default async function GameDetailPage(props: PageProps<"/game/[id]">) {
                   textShadow: "0 0 6px rgba(255,0,110,0.5)",
                 }}
               >
-                {game.best.toLocaleString("es-ES")}
+                {best.toLocaleString("es-ES")}
               </div>
             </div>
             <div>
