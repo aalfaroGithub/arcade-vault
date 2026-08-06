@@ -5,27 +5,26 @@ import { useEffect, useRef, useState } from "react";
 import type { Game } from "../data/games";
 import { insertScore } from "@/lib/supabase/queries";
 import { readAvUser } from "./Nav";
-import Asteroids, { type AsteroidsHandle } from "./games/Asteroids";
+import { REAL_GAMES } from "../data/realGames";
+import type { GameHandle } from "./games/types";
 
 const SCORES_KEY = "av_scores";
 
 export default function GamePlayer({ game }: { game: Game }) {
-  const isAsteroids = game.id === "asteroids";
-  const asteroidsRef = useRef<AsteroidsHandle>(null);
+  const real = REAL_GAMES[game.id];
+  const realRef = useRef<GameHandle>(null);
   const [resetKey, setResetKey] = useState(0);
 
   const [simScore, setSimScore] = useState(0);
-  const [asteroidsState, setAsteroidsState] = useState({
+  const [realState, setRealState] = useState({
     score: 0,
     lives: 3,
     level: 1,
   });
 
-  const score = isAsteroids ? asteroidsState.score : simScore;
-  const lives = isAsteroids ? asteroidsState.lives : 3;
-  const level = isAsteroids
-    ? asteroidsState.level
-    : Math.floor(simScore / 2500) + 1;
+  const score = real ? realState.score : simScore;
+  const lives = real ? realState.lives : 3;
+  const level = real ? realState.level : Math.floor(simScore / 2500) + 1;
 
   const [paused, setPaused] = useState(false);
   const [over, setOver] = useState(false);
@@ -33,31 +32,31 @@ export default function GamePlayer({ game }: { game: Game }) {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    if (isAsteroids || over || paused) return;
+    if (real || over || paused) return;
     const t = setInterval(
       () => setSimScore((s) => s + Math.floor(10 + Math.random() * 90)),
       220,
     );
     return () => clearInterval(t);
-  }, [isAsteroids, over, paused]);
+  }, [real, over, paused]);
 
   const togglePause = () => {
-    if (isAsteroids) {
-      if (paused) asteroidsRef.current?.resume();
-      else asteroidsRef.current?.pause();
+    if (real) {
+      if (paused) realRef.current?.resume();
+      else realRef.current?.pause();
     }
     setPaused((p) => !p);
   };
 
   const endGame = () => {
-    if (isAsteroids) asteroidsRef.current?.forceGameOver();
+    if (real) realRef.current?.forceGameOver();
     setOver(true);
   };
 
   const restart = () => {
-    if (isAsteroids) {
+    if (real) {
       setResetKey((k) => k + 1);
-      setAsteroidsState({ score: 0, lives: 3, level: 1 });
+      setRealState({ score: 0, lives: 3, level: 1 });
     } else {
       setSimScore(0);
     }
@@ -67,7 +66,7 @@ export default function GamePlayer({ game }: { game: Game }) {
   };
 
   const saveScore = () => {
-    if (isAsteroids) {
+    if (real) {
       insertScore(game.id, name, score).catch(() => {
         // fallo de red/Supabase; se ignora en este MVP
       });
@@ -122,13 +121,13 @@ export default function GamePlayer({ game }: { game: Game }) {
 
       <div className="crt">
         <div className="crt-screen">
-          {isAsteroids ? (
-            <Asteroids
+          {real ? (
+            <real.component
               key={resetKey}
-              ref={asteroidsRef}
-              onStateChange={setAsteroidsState}
+              ref={realRef}
+              onStateChange={setRealState}
               onGameOver={(finalScore) => {
-                setAsteroidsState((s) => ({ ...s, score: finalScore }));
+                setRealState((s) => ({ ...s, score: finalScore }));
                 setOver(true);
               }}
             />

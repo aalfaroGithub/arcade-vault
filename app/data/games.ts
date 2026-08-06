@@ -27,8 +27,9 @@ export const GAMES: Game[] = [
   {
     id: "caida",
     title: "CAÍDA",
-    short: "Encaja las piezas antes de que el techo te aplaste.",
-    long: "Piezas geométricas descienden desde la oscuridad. Rótalas, encástralas y limpia líneas para sobrevivir. La velocidad aumenta sin piedad cada 10 líneas.",
+    short:
+      "Encaja las piezas, limpia líneas y sube de nivel antes de que el techo te aplaste.",
+    long: "Piezas geométricas descienden desde la oscuridad. Rótalas con kicks de pared, consulta la siguiente pieza para planear tu jugada y limpia líneas completas para sumar puntos. Cada 10 líneas subes de nivel y la caída se acelera sin piedad.",
     cat: "PUZZLE",
     cover: "cover-tetro",
     color: "magenta",

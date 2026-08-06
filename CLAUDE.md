@@ -16,7 +16,9 @@ No test runner is configured yet.
 
 ## Skills
 
-Usa siempre /fronend-design para diseñar interfaces de usuario.
+Usa siempre /frontend-design para diseñar interfaces de usuario.
+
+Usa /spec-game (en vez de /spec) cuando el requerimiento sea añadir un juego real jugable con leaderboard al catálogo — genera un spec en `specs/` con las preguntas y el contrato de integración específicos de ese tipo de feature (origen del juego, mapeo al catálogo, contrato de HUD, fricciones de portado, orden de la migración de Supabase). Ver `.claude/skills/spec-game/`.
 
 ## Architecture
 
@@ -33,4 +35,4 @@ This project follows spec-driven development using `/spec` and `/spec-impl`, bas
 npx skills@latest add Klerith/fernando-skills
 ```
 
-Use `/spec` before implementing new features, then `/spec-impl` to implement against the spec.
+Use `/spec` before implementing new features, then `/spec-impl` to implement against the spec. For the specific case of adding a new real, playable game with a leaderboard, use `/spec-game` instead of `/spec` — same downstream flow (`Draft` → approve → `/spec-impl`), but it asks the domain-specific questions this project has already had to answer twice (Asteroids' port and its Supabase leaderboard).
