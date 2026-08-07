@@ -72,7 +72,7 @@ No hay auth real todavía. `/auth` guarda un `{ name }` en `localStorage` bajo l
 ## Skills
 
 - **`/frontend-design`** — úsala siempre para diseñar interfaces de usuario.
-- **Agente `game-planner`** — úsalo primero para decidir **qué** juego añadir al catálogo. Evalúa candidatos (diversidad de categoría, viabilidad en canvas, encaje con el leaderboard, estética retro) y mantiene memoria de lo ya sugerido/descartado/implementado en `references/game-suggestions-todo.md`. Ver `.claude/agents/game-planner.md`.
+- **Agente `game-planner`** — úsalo primero para decidir **qué** juego añadir al catálogo. Evalúa candidatos (diversidad de categoría, viabilidad en canvas, encaje con el leaderboard, estética retro) y mantiene memoria en `references/game-suggestions-todo.md` como una **tabla** (una fila por candidato/estado). Es seguro lanzarlo en **varias instancias en paralelo**: cada una reclama y escribe solo sus propias filas. Ver `.claude/agents/game-planner.md`.
 - **`/spec-game`** (en vez de `/spec`) cuando el requerimiento sea añadir un juego real jugable con leaderboard al catálogo — úsalo después de `game-planner` para especificar **cómo** portarlo. Genera un spec en `specs/` con las preguntas y el contrato de integración específicos: origen del juego, mapeo al catálogo, contrato de HUD, fricciones de portado y orden de la migración de Supabase. Ver `.claude/skills/spec-game/` (incluye `references/integration-contract.md`, el checklist completo de integración).
 
 ## Spec Driven Design
