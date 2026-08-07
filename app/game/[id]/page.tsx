@@ -85,7 +85,7 @@ export default async function GameDetailPage(props: PageProps<"/game/[id]">) {
         </div>
       </div>
 
-      <aside>
+      <aside id="leaderboard">
         <Leaderboard scores={scores} />
       </aside>
     </div>
