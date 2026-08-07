@@ -2,6 +2,7 @@ import { ComponentType, RefAttributes } from "react";
 import type { GameHandle, GameProps } from "../components/games/types";
 import Asteroids from "../components/games/Asteroids";
 import Tetris from "../components/games/Tetris";
+import Arkanoid from "../components/games/Arkanoid";
 
 export interface RealGameEntry {
   component: ComponentType<GameProps & RefAttributes<GameHandle>>;
@@ -10,4 +11,5 @@ export interface RealGameEntry {
 export const REAL_GAMES: Record<string, RealGameEntry> = {
   asteroids: { component: Asteroids },
   caida: { component: Tetris },
+  "bloque-buster": { component: Arkanoid },
 };
