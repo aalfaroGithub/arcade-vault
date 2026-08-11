@@ -8,18 +8,6 @@ const ROWS = 20;
 const BLOCK = 30;
 const NEXT_BLOCK = 30;
 
-const COLORS: (string | null)[] = [
-  null,
-  "#4dd0e1", // I - cyan
-  "#ffd54f", // O - yellow
-  "#ba68c8", // T - purple
-  "#81c784", // S - green
-  "#e57373", // Z - red
-  "#90caf9", // J - pale blue
-  "#ffb74d", // L - orange
-  "#9e9e9e", // N - tuerca (gris metálico)
-];
-
 const PIECES: (number[][] | null)[] = [
   null,
   [
@@ -76,12 +64,14 @@ interface Piece {
 type GameState = "playing" | "gameover";
 
 const Tetris = forwardRef<GameHandle, GameProps>(function Tetris(
-  { onStateChange, onGameOver },
+  { onStateChange, onGameOver, palette },
   ref,
 ) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const nextCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const controlsRef = useRef<GameHandle | null>(null);
+  const paletteRef = useRef(palette);
+  paletteRef.current = palette;
 
   useImperativeHandle(
     ref,
@@ -270,15 +260,15 @@ const Tetris = forwardRef<GameHandle, GameProps>(function Tetris(
     ) {
       if (!colorIndex) return;
       context.globalAlpha = alpha ?? 1;
-      context.fillStyle = COLORS[colorIndex]!;
+      context.fillStyle = paletteRef.current.entities[colorIndex]!;
       context.fillRect(x * size + 1, y * size + 1, size - 2, size - 2);
-      context.fillStyle = "rgba(255,255,255,0.12)";
+      context.fillStyle = paletteRef.current.ink;
       context.fillRect(x * size + 1, y * size + 1, size - 2, 4);
       context.globalAlpha = 1;
     }
 
     function drawGrid() {
-      ctx!.strokeStyle = "rgba(255,255,255,0.08)";
+      ctx!.strokeStyle = paletteRef.current.grid;
       ctx!.lineWidth = 0.5;
       for (let c = 1; c < COLS; c++) {
         ctx!.beginPath();

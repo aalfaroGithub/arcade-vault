@@ -5,6 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import type { Game } from "../data/games";
 import { insertScore } from "@/lib/supabase/queries";
 import { readAvUser } from "./Nav";
+import { useAvSkin } from "./SkinContext";
+import { getPalette } from "../data/skins";
 import { REAL_GAMES } from "../data/realGames";
 import type { GameHandle } from "./games/types";
 
@@ -14,6 +16,8 @@ export default function GamePlayer({ game }: { game: Game }) {
   const real = REAL_GAMES[game.id];
   const realRef = useRef<GameHandle>(null);
   const [resetKey, setResetKey] = useState(0);
+  const skin = useAvSkin();
+  const palette = getPalette(game.id, skin);
 
   const [simScore, setSimScore] = useState(0);
   const [realState, setRealState] = useState({
@@ -130,6 +134,7 @@ export default function GamePlayer({ game }: { game: Game }) {
                 setRealState((s) => ({ ...s, score: finalScore }));
                 setOver(true);
               }}
+              palette={palette}
             />
           ) : (
             <div className="game-arena">

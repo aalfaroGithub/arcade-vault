@@ -69,10 +69,22 @@ Todo juego real es un componente cliente en `app/components/games/` que renderiz
 
 No hay auth real todavía. `/auth` guarda un `{ name }` en `localStorage` bajo la clave `av_user`; `app/components/Nav.tsx` exporta `readAvUser`/`writeAvUser`/`useAvUser` (con `useSyncExternalStore` + evento `av-user-change`). El nombre solo se usa para prellenar el campo de iniciales al guardar puntuación y para resaltar "tu mejor marca" en el Hall of Fame. `scores.user_id` existe en el esquema pero siempre va `null`.
 
+### Skins
+
+Cada juego real ofrece al menos 3 skins — `clasico` (default), `neon` y `retro` —, todas legibles sobre el fondo oscuro del sitio (único modo, no hay tema claro).
+
+- `app/data/skins.ts` — fuente de verdad: `GamePalette`, `GAME_PALETTES` (id de juego → skin → paleta) y `getPalette(gameId, skin)` (cae a `clasico` si falta la skin o el juego).
+- Selector global de sitio en `app/components/Nav.tsx` (`.av-skinner`); estado en `app/components/SkinContext.tsx` (`av_skin` en `localStorage`, mismo patrón `useSyncExternalStore` que `av_user`). El cambio de skin es **en caliente**: `skin` no forma parte de `key={resetKey}` en `GamePlayer.tsx`, así que no reinicia la partida.
+- Tokens compartidos por skin (Nav, HUD, `.crt`, `.neon-*`) en `app/globals.css`, bloques `[data-skin="neon"]`/`[data-skin="retro"]`; `clasico` es el `:root`, sin bloque propio.
+- Cada juego lee su paleta vía un `paletteRef` sincronizado en cada render (nunca la prop `palette` directo dentro del loop, que vive en un `useEffect(..., [])`) — ver `app/components/games/types.ts` para el contrato exacto y cualquiera de los 4 juegos reales para el patrón.
+- Memoria de qué juego tiene qué skin: `references/game-skins.md`.
+
 ## Skills
 
 - **`/frontend-design`** — úsala siempre para diseñar interfaces de usuario.
-- **`/spec-game`** (en vez de `/spec`) cuando el requerimiento sea añadir un juego real jugable con leaderboard al catálogo. Genera un spec en `specs/` con las preguntas y el contrato de integración específicos: origen del juego, mapeo al catálogo, contrato de HUD, fricciones de portado y orden de la migración de Supabase. Ver `.claude/skills/spec-game/` (incluye `references/integration-contract.md`, el checklist completo de integración).
+- **Agente `game-planner`** — úsalo primero para decidir **qué** juego añadir al catálogo. Evalúa candidatos (diversidad de categoría, viabilidad en canvas, encaje con el leaderboard, estética retro) y mantiene memoria en `references/game-suggestions-todo.md` como una **tabla** (una fila por candidato/estado). Es seguro lanzarlo en **varias instancias en paralelo**: cada una reclama y escribe solo sus propias filas. Ver `.claude/agents/game-planner.md`.
+- **Agente `skin-designer`** — úsalo para auditar/implementar las skins (`clasico`/`neon`/`retro`) de **un** juego real, pasándole su `id` (p. ej. `@skin-designer caida`). Trabaja un solo juego por invocación — no lo lances en paralelo ni le pases varios ids. Mantiene memoria en `references/game-skins.md` (una fila por juego). Ver `.claude/agents/skin-designer.md` y la sección Skins más arriba.
+- **`/spec-game`** (en vez de `/spec`) cuando el requerimiento sea añadir un juego real jugable con leaderboard al catálogo — úsalo después de `game-planner` para especificar **cómo** portarlo. Genera un spec en `specs/` con las preguntas y el contrato de integración específicos: origen del juego, mapeo al catálogo, contrato de HUD, fricciones de portado y orden de la migración de Supabase. Ver `.claude/skills/spec-game/` (incluye `references/integration-contract.md`, el checklist completo de integración).
 
 ## Spec Driven Design
 

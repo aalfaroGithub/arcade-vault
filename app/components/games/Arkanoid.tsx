@@ -219,11 +219,13 @@ interface Explosion {
 }
 
 const Arkanoid = forwardRef<GameHandle, GameProps>(function Arkanoid(
-  { onStateChange, onGameOver },
+  { onStateChange, onGameOver, palette },
   ref,
 ) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const controlsRef = useRef<GameHandle | null>(null);
+  const paletteRef = useRef(palette);
+  paletteRef.current = palette;
 
   useImperativeHandle(
     ref,
@@ -248,8 +250,32 @@ const Arkanoid = forwardRef<GameHandle, GameProps>(function Arkanoid(
     if (!ctx) return;
 
     let cancelled = false;
-    let ssImg: HTMLCanvasElement | null = null;
+    let ssImg: HTMLCanvasElement | null = null; // spritesheet base, sin teñir
     let ssLoaded = false;
+    const tintedCache = new Map<string, HTMLCanvasElement>();
+
+    /** Spritesheet a dibujar según la skin activa: el original si
+     * palette.tint es null, o una copia teñida (cacheada por color) si no. */
+    function getSpriteSheet(): HTMLCanvasElement | null {
+      const tint = paletteRef.current.tint;
+      if (!tint || !ssImg) return ssImg;
+      let tinted = tintedCache.get(tint);
+      if (!tinted) {
+        tinted = document.createElement("canvas");
+        tinted.width = ssImg.width;
+        tinted.height = ssImg.height;
+        const tctx = tinted.getContext("2d");
+        if (tctx) {
+          tctx.drawImage(ssImg, 0, 0);
+          tctx.globalCompositeOperation = "source-atop";
+          tctx.fillStyle = tint;
+          tctx.fillRect(0, 0, tinted.width, tinted.height);
+          tctx.globalCompositeOperation = "source-over";
+        }
+        tintedCache.set(tint, tinted);
+      }
+      return tinted;
+    }
 
     const bounceSound = new Audio("/games/arkanoid/sounds/ball-bounce.mp3");
     const breakSound = new Audio("/games/arkanoid/sounds/break-sound.mp3");
@@ -309,12 +335,13 @@ const Arkanoid = forwardRef<GameHandle, GameProps>(function Arkanoid(
       w: number,
       h: number,
     ) {
-      if (!ssLoaded || !ssImg) return;
+      const sheet = getSpriteSheet();
+      if (!ssLoaded || !sheet) return;
       const sp = name.startsWith("block_")
         ? SPRITES.blocks[name.slice(6) as BlockColor]
         : SPRITES[name as "paddle" | "ball"];
       if (!sp) return;
-      ctx!.drawImage(ssImg, sp.sx, sp.sy, sp.sw, sp.sh, x, y, w, h);
+      ctx!.drawImage(sheet, sp.sx, sp.sy, sp.sw, sp.sh, x, y, w, h);
     }
 
     function drawFrame(
@@ -324,8 +351,24 @@ const Arkanoid = forwardRef<GameHandle, GameProps>(function Arkanoid(
       w: number,
       h: number,
     ) {
-      if (!ssLoaded || !ssImg) return;
-      ctx!.drawImage(ssImg, frame.sx, frame.sy, frame.sw, frame.sh, x, y, w, h);
+      const sheet = getSpriteSheet();
+      if (!ssLoaded || !sheet) return;
+      ctx!.drawImage(sheet, frame.sx, frame.sy, frame.sw, frame.sh, x, y, w, h);
+    }
+
+    /** Envuelve un dibujo con el halo de la skin activa. Con glow: 0
+     * (clasico/retro) es un no-op exacto: no toca el contexto. */
+    function withGlow(color: string, fn: () => void) {
+      const glow = paletteRef.current.glow;
+      if (glow > 0) {
+        ctx!.shadowBlur = glow;
+        ctx!.shadowColor = color;
+      }
+      fn();
+      if (glow > 0) {
+        ctx!.shadowBlur = 0;
+        ctx!.shadowColor = "transparent";
+      }
     }
 
     function update(dt: number) {
@@ -404,15 +447,17 @@ const Arkanoid = forwardRef<GameHandle, GameProps>(function Arkanoid(
     }
 
     function draw() {
-      ctx!.fillStyle = "#000";
+      ctx!.fillStyle = paletteRef.current.bg;
       ctx!.fillRect(0, 0, CANVAS_W, CANVAS_H);
 
       if (state === "loading") {
-        ctx!.fillStyle = "#fff";
+        ctx!.fillStyle = paletteRef.current.ink;
         ctx!.font = "bold 24px monospace";
         ctx!.textAlign = "center";
         ctx!.textBaseline = "middle";
-        ctx!.fillText("CARGANDO...", CANVAS_W / 2, CANVAS_H / 2);
+        withGlow(paletteRef.current.ink, () => {
+          ctx!.fillText("CARGANDO...", CANVAS_W / 2, CANVAS_H / 2);
+        });
         return;
       }
 
@@ -432,17 +477,21 @@ const Arkanoid = forwardRef<GameHandle, GameProps>(function Arkanoid(
           Math.floor((exp.elapsed / EXPLOSION_DURATION) * 4),
           3,
         );
-        drawFrame(
-          EXPLOSION_FRAMES[exp.color][frameIndex],
-          exp.x,
-          exp.y,
-          exp.w,
-          exp.h,
-        );
+        withGlow(paletteRef.current.accent, () => {
+          drawFrame(
+            EXPLOSION_FRAMES[exp.color][frameIndex],
+            exp.x,
+            exp.y,
+            exp.w,
+            exp.h,
+          );
+        });
       }
 
-      drawSprite("paddle", paddle.x, paddle.y, paddle.w, paddle.h);
-      drawSprite("ball", ball.x, ball.y, ball.w, ball.h);
+      withGlow(paletteRef.current.ink, () => {
+        drawSprite("paddle", paddle.x, paddle.y, paddle.w, paddle.h);
+        drawSprite("ball", ball.x, ball.y, ball.w, ball.h);
+      });
     }
 
     let lastReportedScore = -1;
