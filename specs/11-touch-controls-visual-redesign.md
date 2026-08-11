@@ -1,6 +1,6 @@
 # SPEC 11 — Rediseño visual del gamepad táctil (TouchControls)
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** 10-touch-controls-mobile (implementado)
 > **Date:** 2026-08-11
 > **Objective:** Rediseñar visualmente `TouchControls.tsx`/`.touch-*` en `globals.css` para que el D-pad y los botones A/B repliquen el look del gamepad de referencia (`references/gamepad-assets/gamepad.html`) — panel biselado con gema central, flechas SVG con glow, botones circulares con anillo de foco — reusando los tokens de skin ya existentes (`--cyan`/`--magenta`/`--yellow`/`--pixel`), sin tocar el mecanismo de input ni `TOUCH_CONFIG`.
