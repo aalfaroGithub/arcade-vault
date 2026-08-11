@@ -26,11 +26,11 @@ const ARROW_CODE: Record<"up" | "down" | "left" | "right", string> = {
   right: "ArrowRight",
 };
 
-const ARROW_GLYPH: Record<"up" | "down" | "left" | "right", string> = {
-  up: "▲",
-  down: "▼",
-  left: "◀",
-  right: "▶",
+const ARROW_PATH: Record<"up" | "down" | "left" | "right", string> = {
+  up: "M12 4 L20 16 L4 16 Z",
+  right: "M8 4 L20 12 L8 20 Z",
+  down: "M4 8 L20 8 L12 20 Z",
+  left: "M16 4 L16 20 L4 12 Z",
 };
 
 const ARROW_AREA: Record<"up" | "down" | "left" | "right", string> = {
@@ -104,9 +104,14 @@ export default function TouchControls({ gameId }: { gameId: string }) {
             onContextMenu={(e) => e.preventDefault()}
             aria-label={dir}
           >
-            {ARROW_GLYPH[dir]}
+            <svg className="touch-dbtn-arrow" viewBox="0 0 24 24" aria-hidden>
+              <path d={ARROW_PATH[dir]} fill="currentColor" />
+            </svg>
           </button>
         ))}
+        <div className="touch-dpad-hub" aria-hidden>
+          <span className="touch-dpad-hub-gem" />
+        </div>
       </div>
       {(config.buttonA || config.buttonB) && (
         <div className="touch-actions">
@@ -129,7 +134,8 @@ export default function TouchControls({ gameId }: { gameId: string }) {
               onContextMenu={(e) => e.preventDefault()}
               aria-label={config.buttonB.label}
             >
-              {config.buttonB.label}
+              <span className="touch-abtn-ring" aria-hidden />
+              <span className="touch-abtn-letter">{config.buttonB.label}</span>
             </button>
           )}
           {config.buttonA && (
@@ -151,7 +157,8 @@ export default function TouchControls({ gameId }: { gameId: string }) {
               onContextMenu={(e) => e.preventDefault()}
               aria-label={config.buttonA.label}
             >
-              {config.buttonA.label}
+              <span className="touch-abtn-ring" aria-hidden />
+              <span className="touch-abtn-letter">{config.buttonA.label}</span>
             </button>
           )}
         </div>
