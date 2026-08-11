@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
   // apareciendo como error de runtime al navegar, aunque las rutas
   // funcionan correctamente. No afecta errores reales de compilación/runtime.
   devIndicators: false,
+  allowedDevOrigins: ["192.168.56.1"],
 };
 
 export default nextConfig;
