@@ -1307,6 +1307,11 @@ a {
     height: 54px;
   }
 }
+@media (min-width: 901px) {
+  .touch-controls {
+    display: none;
+  }
+}
 
 /* fake in-screen game */
 .game-arena {
