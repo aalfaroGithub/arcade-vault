@@ -1074,6 +1074,11 @@ a {
   margin-bottom: 18px;
   flex-wrap: wrap;
 }
+.hud-stats {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
 .hud-stat {
   display: flex;
   flex-direction: column;
@@ -1103,6 +1108,28 @@ a {
 .hud-actions {
   display: flex;
   gap: 10px;
+  flex-wrap: wrap;
+}
+@media (max-width: 520px) {
+  .player-hud {
+    padding: 12px 14px;
+  }
+  .hud-stats {
+    gap: 14px;
+  }
+  .hud-stat .l {
+    font-size: 9px;
+  }
+  .hud-stat .v {
+    font-size: 13px;
+  }
+  .hud-actions {
+    gap: 8px;
+  }
+  .hud-actions .btn {
+    padding: 10px 14px;
+    font-size: 9px;
+  }
 }
 
 .crt {
@@ -1194,6 +1221,91 @@ a {
   border-radius: 50%;
   background: var(--green);
   box-shadow: 0 0 6px var(--green);
+}
+
+/* ===== touch controls (mobile) ===== */
+.touch-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 18px;
+  padding: 14px 18px;
+  border: 1px solid var(--line);
+  background: var(--bg-2);
+}
+.touch-dpad {
+  display: grid;
+  grid-template-areas:
+    ". up ."
+    "left . right"
+    ". down .";
+  grid-template-columns: repeat(3, 44px);
+  grid-template-rows: repeat(3, 44px);
+  gap: 4px;
+  touch-action: none;
+}
+.touch-dbtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--pixel);
+  font-size: 14px;
+  color: var(--cyan);
+  background: rgba(0, 245, 255, 0.06);
+  border: 1px solid var(--cyan);
+  border-radius: 6px;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+.touch-dbtn:active {
+  background: rgba(0, 245, 255, 0.25);
+}
+.touch-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  touch-action: none;
+}
+.touch-abtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  font-family: var(--pixel);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-align: center;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--cyan);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+.touch-abtn.yellow {
+  border-color: var(--yellow);
+  color: var(--yellow);
+}
+.touch-abtn.magenta {
+  border-color: var(--magenta);
+  color: var(--magenta);
+}
+.touch-abtn:active {
+  background: rgba(255, 255, 255, 0.16);
+}
+@media (max-width: 420px) {
+  .touch-dpad {
+    grid-template-columns: repeat(3, 38px);
+    grid-template-rows: repeat(3, 38px);
+  }
+  .touch-abtn {
+    width: 54px;
+    height: 54px;
+  }
 }
 
 /* fake in-screen game */

@@ -9,6 +9,7 @@ import { useAvSkin } from "./SkinContext";
 import { getPalette } from "../data/skins";
 import { REAL_GAMES } from "../data/realGames";
 import type { GameHandle } from "./games/types";
+import TouchControls from "./TouchControls";
 
 const SCORES_KEY = "av_scores";
 
@@ -90,7 +91,7 @@ export default function GamePlayer({ game }: { game: Game }) {
   return (
     <div className="av-player fade-in">
       <div className="player-hud">
-        <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
+        <div className="hud-stats">
           <div className="hud-stat">
             <div className="l">Jugador</div>
             <div className="v" style={{ color: "var(--ink)" }}>
@@ -175,6 +176,8 @@ export default function GamePlayer({ game }: { game: Game }) {
           <span>CARGA · 1MB</span>
         </div>
       </div>
+
+      {real && <TouchControls gameId={game.id} />}
 
       {over && (
         <div className="modal-bd">
