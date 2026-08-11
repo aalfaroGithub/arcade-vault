@@ -19,6 +19,42 @@
   --line-2: rgba(255, 255, 255, 0.06);
   --pixel: var(--font-pixel), system-ui, monospace;
   --mono: var(--font-mono-game), "Courier Prime", "Courier New", monospace;
+  --cyan-glow-1: rgba(0, 245, 255, 0.65);
+  --cyan-glow-2: rgba(0, 245, 255, 0.45);
+  --magenta-glow-1: rgba(255, 0, 110, 0.65);
+  --magenta-glow-2: rgba(255, 0, 110, 0.45);
+  --yellow-glow-1: rgba(245, 255, 0, 0.7);
+  --yellow-glow-2: rgba(245, 255, 0, 0.4);
+  --green-glow-1: rgba(0, 255, 136, 0.6);
+  --green-glow-2: rgba(0, 255, 136, 0.35);
+}
+
+/* ===== skins: clasico (= :root, sin bloque), neon, retro =====
+   El agente skin-designer (.claude/agents/skin-designer.md) añade aquí las
+   paletas neon/retro de cada juego cuando se le pide, un juego a la vez.
+   Estos bloques cubren los tokens compartidos por toda la UI (Nav, HUD,
+   .crt, .neon-*); las paletas de canvas por juego viven en app/data/skins.ts. */
+[data-skin="neon"] {
+  --cyan: #00f5ff;
+  --magenta: #ff006e;
+  --yellow: #f5ff00;
+  --green: #00ff88;
+}
+
+[data-skin="retro"] {
+  --cyan: #33ff66;
+  --magenta: #ffb000;
+  --yellow: #ffd166;
+  --green: #33ff66;
+  --line: rgba(255, 176, 0, 0.18);
+  --cyan-glow-1: transparent;
+  --cyan-glow-2: transparent;
+  --magenta-glow-1: transparent;
+  --magenta-glow-2: transparent;
+  --yellow-glow-1: transparent;
+  --yellow-glow-2: transparent;
+  --green-glow-1: transparent;
+  --green-glow-2: transparent;
 }
 
 @theme inline {
@@ -156,26 +192,26 @@ a {
 .neon-cyan {
   color: var(--cyan);
   text-shadow:
-    0 0 6px rgba(0, 245, 255, 0.65),
-    0 0 16px rgba(0, 245, 255, 0.45);
+    0 0 6px var(--cyan-glow-1),
+    0 0 16px var(--cyan-glow-2);
 }
 .neon-magenta {
   color: var(--magenta);
   text-shadow:
-    0 0 6px rgba(255, 0, 110, 0.65),
-    0 0 16px rgba(255, 0, 110, 0.45);
+    0 0 6px var(--magenta-glow-1),
+    0 0 16px var(--magenta-glow-2);
 }
 .neon-yellow {
   color: var(--yellow);
   text-shadow:
-    0 0 6px rgba(245, 255, 0, 0.7),
-    0 0 16px rgba(245, 255, 0, 0.4);
+    0 0 6px var(--yellow-glow-1),
+    0 0 16px var(--yellow-glow-2);
 }
 .neon-green {
   color: var(--green);
   text-shadow:
-    0 0 6px rgba(0, 255, 136, 0.6),
-    0 0 16px rgba(0, 255, 136, 0.35);
+    0 0 6px var(--green-glow-1),
+    0 0 16px var(--green-glow-2);
 }
 
 .flicker {
@@ -275,6 +311,42 @@ a {
 .av-nav .spacer {
   flex: 1;
 }
+.av-skinner {
+  display: flex;
+  gap: 4px;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--bg-2);
+  margin-right: 12px;
+}
+.av-skin-chip {
+  border: none;
+  background: transparent;
+  color: var(--ink-dim);
+  font-family: var(--pixel);
+  font-size: 8px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 6px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    color 0.15s,
+    background 0.15s;
+}
+.av-skin-chip:hover {
+  color: var(--ink);
+}
+.av-skin-chip.is-active {
+  color: var(--bg);
+  background: var(--cyan);
+  box-shadow: 0 0 10px var(--cyan-glow-1);
+}
+.av-mobile-panel .av-skinner {
+  margin: 12px 0 0 0;
+  align-self: flex-start;
+}
 .av-nav .coin-counter {
   display: flex;
   align-items: center;
@@ -305,6 +377,9 @@ a {
     display: none;
   }
   .av-nav .coin-counter {
+    display: none;
+  }
+  .av-nav > .av-skinner {
     display: none;
   }
   .av-nav .hamburger {

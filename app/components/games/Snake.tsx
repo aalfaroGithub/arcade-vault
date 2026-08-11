@@ -2,6 +2,22 @@
 
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import type { GameHandle, GameProps } from "./types";
+import type { GamePalette } from "../../data/skins";
+
+/**
+ * Aplica el glow de la skin activa al relleno siguiente. Con `palette.glow === 0`
+ * (skins clasico y retro) no toca el resultado: un shadowBlur de 0 no dibuja
+ * sombra. Debe llamarse dentro de un save()/restore().
+ */
+function applyGlow(
+  ctx: CanvasRenderingContext2D,
+  palette: GamePalette,
+  color: string,
+) {
+  if (palette.glow <= 0) return;
+  ctx.shadowBlur = palette.glow;
+  ctx.shadowColor = color;
+}
 
 const COLS = 20;
 const ROWS = 15;
@@ -77,11 +93,13 @@ const KEY_TO_DIR: Record<string, Direction> = {
 type GameState = "playing" | "gameover";
 
 const Snake = forwardRef<GameHandle, GameProps>(function Snake(
-  { onStateChange, onGameOver },
+  { onStateChange, onGameOver, palette },
   ref,
 ) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const controlsRef = useRef<GameHandle | null>(null);
+  const paletteRef = useRef(palette);
+  paletteRef.current = palette;
 
   useImperativeHandle(
     ref,
@@ -193,10 +211,10 @@ const Snake = forwardRef<GameHandle, GameProps>(function Snake(
     }
 
     function draw() {
-      ctx!.fillStyle = "#0a0a0a";
+      ctx!.fillStyle = paletteRef.current.bg;
       ctx!.fillRect(0, 0, CANVAS_W, CANVAS_H);
 
-      ctx!.strokeStyle = "rgba(255,255,255,0.06)";
+      ctx!.strokeStyle = paletteRef.current.grid;
       ctx!.lineWidth = 0.5;
       for (let c = 1; c < COLS; c++) {
         ctx!.beginPath();
@@ -227,10 +245,16 @@ const Snake = forwardRef<GameHandle, GameProps>(function Snake(
         );
       }
 
+      // La serpiente (no la fruta) recibe el glow de la skin activa.
+      ctx!.save();
       for (let i = snake.length - 1; i >= 0; i--) {
         const seg = snake[i];
         const isHead = i === 0;
-        ctx!.fillStyle = isHead ? "#7CFC7C" : "#2FA82F";
+        const color = isHead
+          ? paletteRef.current.entities[0]
+          : paletteRef.current.entities[1];
+        ctx!.fillStyle = color;
+        applyGlow(ctx!, paletteRef.current, color);
         ctx!.fillRect(
           seg.col * CELL + 1,
           seg.row * CELL + 1,
@@ -238,10 +262,12 @@ const Snake = forwardRef<GameHandle, GameProps>(function Snake(
           CELL - 2,
         );
         if (isHead) {
-          ctx!.fillStyle = "rgba(255,255,255,0.25)";
+          ctx!.shadowBlur = 0;
+          ctx!.fillStyle = paletteRef.current.ink;
           ctx!.fillRect(seg.col * CELL + 1, seg.row * CELL + 1, CELL - 2, 6);
         }
       }
+      ctx!.restore();
     }
 
     let lastReportedScore = -1;

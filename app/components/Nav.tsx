@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useMemo, useState, useSyncExternalStore } from "react";
+import { SKINS } from "../data/skins";
+import { useAvSkin, writeAvSkin } from "./SkinContext";
 
 export interface AvUser {
   name: string;
@@ -65,6 +67,7 @@ export default function Nav() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const user = useAvUser();
+  const skin = useAvSkin();
 
   const isActive = (
     name: "home" | "biblioteca" | "salon" | "about" | "auth",
@@ -114,6 +117,19 @@ export default function Nav() {
           </Link>
         </div>
         <div className="spacer"></div>
+        <div className="av-skinner" role="group" aria-label="Skin del sitio">
+          {SKINS.map((s) => (
+            <button
+              key={s.id}
+              className={"av-skin-chip" + (skin === s.id ? " is-active" : "")}
+              onClick={() => writeAvSkin(s.id)}
+              aria-pressed={skin === s.id}
+              title={s.label}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
         <div className="coin-counter">
           <span className="coin"></span>
           <span>CRÉDITOS · 03</span>
@@ -183,6 +199,19 @@ export default function Nav() {
           {user ? "Cuenta" : "Iniciar Sesión"}
         </Link>
         <div style={{ flex: 1 }}></div>
+        <div className="av-skinner" role="group" aria-label="Skin del sitio">
+          {SKINS.map((s) => (
+            <button
+              key={s.id}
+              className={"av-skin-chip" + (skin === s.id ? " is-active" : "")}
+              onClick={() => writeAvSkin(s.id)}
+              aria-pressed={skin === s.id}
+              title={s.label}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
         <div
           className="pixel"
           style={{

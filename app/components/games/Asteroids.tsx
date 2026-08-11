@@ -2,6 +2,7 @@
 
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import type { GameHandle, GameProps } from "./types";
+import type { GamePalette } from "../../data/skins";
 
 const W = 800;
 const H = 600;
@@ -20,6 +21,21 @@ const dist = (a: { x: number; y: number }, b: { x: number; y: number }) =>
   Math.hypot(a.x - b.x, a.y - b.y);
 const rand = (min: number, max: number) => min + Math.random() * (max - min);
 const randInt = (min: number, max: number) => Math.floor(rand(min, max + 1));
+
+/**
+ * Aplica el glow de la skin activa al trazo/relleno siguiente. Con
+ * `palette.glow === 0` (skins clasico y retro) no toca el resultado: un
+ * shadowBlur de 0 no dibuja sombra. Debe llamarse dentro de un save()/restore().
+ */
+function applyGlow(
+  ctx: CanvasRenderingContext2D,
+  palette: GamePalette,
+  color: string,
+) {
+  if (palette.glow <= 0) return;
+  ctx.shadowBlur = palette.glow;
+  ctx.shadowColor = color;
+}
 
 class Bullet {
   x: number;
@@ -45,11 +61,14 @@ class Bullet {
     if (this.ttl <= 0) this.dead = true;
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
-    ctx.fillStyle = "#fff";
+  draw(ctx: CanvasRenderingContext2D, palette: GamePalette) {
+    ctx.save();
+    ctx.fillStyle = palette.ink;
+    applyGlow(ctx, palette, palette.ink);
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
     ctx.fill();
+    ctx.restore();
   }
 }
 
@@ -100,11 +119,12 @@ class Asteroid {
     ];
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
+  draw(ctx: CanvasRenderingContext2D, palette: GamePalette) {
     ctx.save();
     ctx.translate(this.x, this.y);
     ctx.rotate(this.rot);
-    ctx.strokeStyle = "#fff";
+    ctx.strokeStyle = palette.ink;
+    applyGlow(ctx, palette, palette.ink);
     ctx.lineWidth = 1.5;
     ctx.lineJoin = "round";
     ctx.beginPath();
@@ -142,22 +162,26 @@ class PowerUp {
     if (this.ttl <= 0) this.dead = true;
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
+  draw(ctx: CanvasRenderingContext2D, palette: GamePalette) {
     if (this.ttl < 2 && Math.floor(this.ttl * 8) % 2 === 0) return;
     const pulse = 0.85 + Math.sin(performance.now() / 150) * 0.15;
     ctx.save();
     ctx.translate(this.x, this.y);
     ctx.rotate(Math.PI / 4);
-    ctx.strokeStyle = "#0ff";
+    ctx.strokeStyle = palette.accent;
+    applyGlow(ctx, palette, palette.accent);
     ctx.lineWidth = 2;
     const r = this.radius * pulse;
     ctx.strokeRect(-r, -r, r * 2, r * 2);
     ctx.restore();
-    ctx.fillStyle = "#0ff";
+    ctx.save();
+    ctx.fillStyle = palette.accent;
+    applyGlow(ctx, palette, palette.accent);
     ctx.font = "bold 12px monospace";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText("3x", this.x, this.y);
+    ctx.restore();
   }
 }
 
@@ -231,7 +255,7 @@ class Ship {
     return [new Bullet(ox, oy, this.angle)];
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
+  draw(ctx: CanvasRenderingContext2D, palette: GamePalette) {
     if (this.dead) return;
     if (this.invincible > 0 && Math.floor(this.invincible * 8) % 2 === 0)
       return;
@@ -239,7 +263,8 @@ class Ship {
     ctx.save();
     ctx.translate(this.x, this.y);
     ctx.rotate(this.angle);
-    ctx.strokeStyle = "#fff";
+    ctx.strokeStyle = palette.ink;
+    applyGlow(ctx, palette, palette.ink);
     ctx.lineWidth = 1.5;
     ctx.lineJoin = "round";
 
@@ -256,7 +281,8 @@ class Ship {
       ctx.moveTo(-8, -4);
       ctx.lineTo(-8 - rand(6, 14), 0);
       ctx.lineTo(-8, 4);
-      ctx.strokeStyle = "rgba(255, 130, 0, 0.85)";
+      ctx.strokeStyle = palette.entities[0];
+      applyGlow(ctx, palette, palette.entities[0]);
       ctx.stroke();
     }
 
@@ -291,25 +317,31 @@ class Particle {
     if (this.ttl <= 0) this.dead = true;
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
+  draw(ctx: CanvasRenderingContext2D, palette: GamePalette) {
     const alpha = this.ttl / this.life;
-    ctx.strokeStyle = `rgba(255,255,255,${alpha.toFixed(2)})`;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = palette.ink;
+    applyGlow(ctx, palette, palette.ink);
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(this.x, this.y);
     ctx.lineTo(this.x - this.vx * 0.05, this.y - this.vy * 0.05);
     ctx.stroke();
+    ctx.restore();
   }
 }
 
 type GameState = "playing" | "dead" | "gameover";
 
 const Asteroids = forwardRef<GameHandle, GameProps>(function Asteroids(
-  { onStateChange, onGameOver },
+  { onStateChange, onGameOver, palette },
   ref,
 ) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const controlsRef = useRef<GameHandle | null>(null);
+  const paletteRef = useRef(palette);
+  paletteRef.current = palette;
 
   useImperativeHandle(
     ref,
@@ -530,7 +562,8 @@ const Asteroids = forwardRef<GameHandle, GameProps>(function Asteroids(
       ctx!.save();
       ctx!.translate(x, y);
       ctx!.rotate(-Math.PI / 2);
-      ctx!.strokeStyle = "#fff";
+      ctx!.strokeStyle = paletteRef.current.ink;
+      applyGlow(ctx!, paletteRef.current, paletteRef.current.ink);
       ctx!.lineWidth = 1.2;
       ctx!.lineJoin = "round";
       ctx!.beginPath();
@@ -544,7 +577,9 @@ const Asteroids = forwardRef<GameHandle, GameProps>(function Asteroids(
     }
 
     function drawHUD() {
-      ctx!.fillStyle = "#fff";
+      ctx!.save();
+      ctx!.fillStyle = paletteRef.current.ink;
+      applyGlow(ctx!, paletteRef.current, paletteRef.current.ink);
       ctx!.font = "15px monospace";
 
       ctx!.textAlign = "left";
@@ -557,30 +592,37 @@ const Asteroids = forwardRef<GameHandle, GameProps>(function Asteroids(
 
       if (ship.tripleShot > 0) {
         ctx!.textAlign = "left";
-        ctx!.fillStyle = "#0ff";
+        ctx!.fillStyle = paletteRef.current.accent;
+        applyGlow(ctx!, paletteRef.current, paletteRef.current.accent);
         ctx!.fillText(`3x  ${ship.tripleShot.toFixed(1)}s`, 14, 46);
       }
+      ctx!.restore();
     }
 
     function drawOverlay(title: string, sub: string) {
+      ctx!.save();
       ctx!.textAlign = "center";
-      ctx!.fillStyle = "#fff";
+      ctx!.fillStyle = paletteRef.current.ink;
+      applyGlow(ctx!, paletteRef.current, paletteRef.current.ink);
       ctx!.font = "bold 46px monospace";
       ctx!.fillText(title, W / 2, H / 2 - 18);
       ctx!.font = "18px monospace";
-      ctx!.fillStyle = "rgba(255,255,255,0.65)";
+      ctx!.fillStyle = paletteRef.current.inkDim;
+      applyGlow(ctx!, paletteRef.current, paletteRef.current.inkDim);
       ctx!.fillText(sub, W / 2, H / 2 + 22);
+      ctx!.restore();
     }
 
     function draw() {
-      ctx!.fillStyle = "#000";
+      ctx!.shadowBlur = 0;
+      ctx!.fillStyle = paletteRef.current.bg;
       ctx!.fillRect(0, 0, W, H);
 
-      particles.forEach((p) => p.draw(ctx!));
-      asteroids.forEach((a) => a.draw(ctx!));
-      powerUps.forEach((p) => p.draw(ctx!));
-      bullets.forEach((b) => b.draw(ctx!));
-      ship.draw(ctx!);
+      particles.forEach((p) => p.draw(ctx!, paletteRef.current));
+      asteroids.forEach((a) => a.draw(ctx!, paletteRef.current));
+      powerUps.forEach((p) => p.draw(ctx!, paletteRef.current));
+      bullets.forEach((b) => b.draw(ctx!, paletteRef.current));
+      ship.draw(ctx!, paletteRef.current);
 
       drawHUD();
 

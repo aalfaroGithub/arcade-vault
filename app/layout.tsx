@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Press_Start_2P, JetBrains_Mono } from "next/font/google";
 import Nav from "./components/Nav";
+import SkinBootstrap from "./components/SkinContext";
 import "./globals.css";
 
 const pixelFont = Press_Start_2P({
@@ -30,6 +31,7 @@ export default function RootLayout({
       className={`${pixelFont.variable} ${monoFont.variable} h-full antialiased`}
     >
       <body>
+        <SkinBootstrap />
         <div className="av-bg" />
         <div className="av-noise" />
         <div id="root">
