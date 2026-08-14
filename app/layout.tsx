@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Press_Start_2P, JetBrains_Mono } from "next/font/google";
 import Nav from "./components/Nav";
 import SkinBootstrap from "./components/SkinContext";
@@ -18,6 +18,13 @@ const monoFont = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "Arcade Vault",
   description: "Plataforma para jugar online y competir por puntuación.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#0a0a0f",
 };
 
 export default function RootLayout({

@@ -40,6 +40,110 @@ const ARROW_AREA: Record<"up" | "down" | "left" | "right", string> = {
   right: "right",
 };
 
+/**
+ * Los listeners táctiles sintéticos de React (onTouchStart/onTouchEnd) se
+ * registran como passive en el root, así que e.preventDefault() dentro de
+ * ellos no funciona y genera un warning en consola. Se usan listeners
+ * nativos con { passive: false } para poder bloquear el scroll/zoom.
+ */
+function useTouchButton(
+  code: string,
+  repeat: boolean,
+  preventDefault: boolean,
+) {
+  const ref = useRef<HTMLButtonElement>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const dispatch = (type: "keydown" | "keyup") => {
+      window.dispatchEvent(new KeyboardEvent(type, { code, key: code }));
+    };
+
+    const clear = () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+
+    const onStart = (e: TouchEvent) => {
+      if (preventDefault) e.preventDefault();
+      dispatch("keydown");
+      if (repeat) {
+        clear();
+        intervalRef.current = setInterval(() => dispatch("keydown"), REPEAT_MS);
+      }
+    };
+
+    const onEnd = (e: TouchEvent) => {
+      if (preventDefault) e.preventDefault();
+      clear();
+      dispatch("keyup");
+    };
+
+    const onContextMenu = (e: Event) => e.preventDefault();
+
+    el.addEventListener("touchstart", onStart, { passive: false });
+    el.addEventListener("touchend", onEnd, { passive: false });
+    el.addEventListener("touchcancel", onEnd, { passive: false });
+    el.addEventListener("contextmenu", onContextMenu);
+
+    return () => {
+      el.removeEventListener("touchstart", onStart);
+      el.removeEventListener("touchend", onEnd);
+      el.removeEventListener("touchcancel", onEnd);
+      el.removeEventListener("contextmenu", onContextMenu);
+      clear();
+    };
+  }, [code, repeat, preventDefault]);
+
+  return ref;
+}
+
+function DpadButton({
+  dir,
+  repeat,
+}: {
+  dir: "up" | "down" | "left" | "right";
+  repeat: boolean;
+}) {
+  const ref = useTouchButton(ARROW_CODE[dir], repeat, true);
+  return (
+    <button
+      ref={ref}
+      type="button"
+      className="touch-dbtn"
+      style={{ gridArea: ARROW_AREA[dir] }}
+      aria-label={dir}
+    >
+      <svg className="touch-dbtn-arrow" viewBox="0 0 24 24" aria-hidden>
+        <path d={ARROW_PATH[dir]} fill="currentColor" />
+      </svg>
+    </button>
+  );
+}
+
+function ActionButton({
+  code,
+  label,
+  className,
+}: {
+  code: string;
+  label: string;
+  className: string;
+}) {
+  const ref = useTouchButton(code, true, true);
+  return (
+    <button ref={ref} type="button" className={className} aria-label={label}>
+      <span className="touch-abtn-ring" aria-hidden />
+      <span className="touch-abtn-letter">{label}</span>
+    </button>
+  );
+}
+
 export default function TouchControls({ gameId }: { gameId: string }) {
   const config = TOUCH_CONFIG[gameId];
   const isTouch = useSyncExternalStore(
@@ -47,35 +151,10 @@ export default function TouchControls({ gameId }: { gameId: string }) {
     getTouchSnapshot,
     getTouchServerSnapshot,
   );
-  const intervalsRef = useRef<Record<string, ReturnType<typeof setInterval>>>(
-    {},
-  );
-
-  useEffect(() => {
-    const intervals = intervalsRef.current;
-    return () => {
-      Object.values(intervals).forEach(clearInterval);
-    };
-  }, []);
 
   if (!config || !isTouch) return null;
 
-  const press = (code: string) => {
-    window.dispatchEvent(new KeyboardEvent("keydown", { code, key: code }));
-    if (intervalsRef.current[code]) clearInterval(intervalsRef.current[code]);
-    intervalsRef.current[code] = setInterval(() => {
-      window.dispatchEvent(new KeyboardEvent("keydown", { code, key: code }));
-    }, REPEAT_MS);
-  };
-
-  const release = (code: string) => {
-    if (intervalsRef.current[code]) {
-      clearInterval(intervalsRef.current[code]);
-      delete intervalsRef.current[code];
-    }
-    window.dispatchEvent(new KeyboardEvent("keyup", { code, key: code }));
-  };
-
+  const dpadRepeat = config.dpadRepeat ?? true;
   const arrows = (
     Object.keys(config.dpad) as (keyof typeof config.dpad)[]
   ).filter((dir) => config.dpad[dir]);
@@ -84,30 +163,7 @@ export default function TouchControls({ gameId }: { gameId: string }) {
     <div className="touch-controls">
       <div className="touch-dpad">
         {arrows.map((dir) => (
-          <button
-            key={dir}
-            type="button"
-            className="touch-dbtn"
-            style={{ gridArea: ARROW_AREA[dir] }}
-            onTouchStart={(e) => {
-              e.preventDefault();
-              press(ARROW_CODE[dir]);
-            }}
-            onTouchEnd={(e) => {
-              e.preventDefault();
-              release(ARROW_CODE[dir]);
-            }}
-            onTouchCancel={(e) => {
-              e.preventDefault();
-              release(ARROW_CODE[dir]);
-            }}
-            onContextMenu={(e) => e.preventDefault()}
-            aria-label={dir}
-          >
-            <svg className="touch-dbtn-arrow" viewBox="0 0 24 24" aria-hidden>
-              <path d={ARROW_PATH[dir]} fill="currentColor" />
-            </svg>
-          </button>
+          <DpadButton key={dir} dir={dir} repeat={dpadRepeat} />
         ))}
         <div className="touch-dpad-hub" aria-hidden>
           <span className="touch-dpad-hub-gem" />
@@ -116,50 +172,18 @@ export default function TouchControls({ gameId }: { gameId: string }) {
       {(config.buttonA || config.buttonB) && (
         <div className="touch-actions">
           {config.buttonB && (
-            <button
-              type="button"
+            <ActionButton
+              code={config.buttonB.code}
+              label={config.buttonB.label}
               className="touch-abtn magenta"
-              onTouchStart={(e) => {
-                e.preventDefault();
-                press(config.buttonB!.code);
-              }}
-              onTouchEnd={(e) => {
-                e.preventDefault();
-                release(config.buttonB!.code);
-              }}
-              onTouchCancel={(e) => {
-                e.preventDefault();
-                release(config.buttonB!.code);
-              }}
-              onContextMenu={(e) => e.preventDefault()}
-              aria-label={config.buttonB.label}
-            >
-              <span className="touch-abtn-ring" aria-hidden />
-              <span className="touch-abtn-letter">{config.buttonB.label}</span>
-            </button>
+            />
           )}
           {config.buttonA && (
-            <button
-              type="button"
+            <ActionButton
+              code={config.buttonA.code}
+              label={config.buttonA.label}
               className="touch-abtn yellow"
-              onTouchStart={(e) => {
-                e.preventDefault();
-                press(config.buttonA!.code);
-              }}
-              onTouchEnd={(e) => {
-                e.preventDefault();
-                release(config.buttonA!.code);
-              }}
-              onTouchCancel={(e) => {
-                e.preventDefault();
-                release(config.buttonA!.code);
-              }}
-              onContextMenu={(e) => e.preventDefault()}
-              aria-label={config.buttonA.label}
-            >
-              <span className="touch-abtn-ring" aria-hidden />
-              <span className="touch-abtn-letter">{config.buttonA.label}</span>
-            </button>
+            />
           )}
         </div>
       )}

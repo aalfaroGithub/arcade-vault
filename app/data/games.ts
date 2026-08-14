@@ -84,8 +84,9 @@ export const GAMES: Game[] = [
   {
     id: "ranaria",
     title: "RANARIA",
-    short: "Cruza la autopista de pixeles.",
-    long: "Salta entre carriles de coches a toda velocidad y troncos a la deriva en el río. Llega a los nenúfares antes de que se acabe el tiempo.",
+    short:
+      "Cruza la carretera y el río sin convertirte en papilla, boca a boca.",
+    long: "Guía a tu rana en saltos de una celda a través de una carretera repleta de coches y camiones, y un río de troncos y tortugas flotantes que se sumergen sin avisar. Llena las cinco bocas del otro lado antes de que se acabe el tiempo de ronda para avanzar de nivel — el tráfico y la corriente se aceleran, y el reloj se acorta. Tres vidas separan cada intento del game over.",
     cat: "ARCADE",
     cover: "cover-rana",
     color: "green",

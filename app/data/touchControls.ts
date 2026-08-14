@@ -10,6 +10,9 @@ export interface TouchConfig {
     left?: boolean;
     right?: boolean;
   };
+  // false para juegos de movimiento discreto (un paso por toque, p. ej. Ranaria);
+  // por defecto true (movimiento continuo mientras se mantiene presionado).
+  dpadRepeat?: boolean;
   buttonA?: TouchButtonConfig;
   buttonB?: TouchButtonConfig;
 }
@@ -29,5 +32,9 @@ export const TOUCH_CONFIG: Record<string, TouchConfig> = {
   },
   serpentina: {
     dpad: { up: true, down: true, left: true, right: true },
+  },
+  ranaria: {
+    dpad: { up: true, down: true, left: true, right: true },
+    dpadRepeat: false,
   },
 };

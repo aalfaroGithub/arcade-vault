@@ -166,6 +166,68 @@ export const GAME_PALETTES: Record<
       glow: 0,
     },
   },
+  // entities[0..4] = coche, camión, tronco, tortuga, rana.
+  // entities[5..8] = fondos de zona: carretera, río, franja segura, fila de
+  // bocas (antes constantes ZONE_COLOR en Frogger.tsx; los valores de
+  // `clasico` son exactamente esos, sin cambio visual).
+  // ink = texto del HUD interno (score/nivel), accent = marco de las bocas.
+  // glow se aplica al cuerpo de vehículos/troncos/tortugas, a la rana y al
+  // marco de las bocas (no a ruedas, ojos ni vetas: detalles neutros).
+  ranaria: {
+    clasico: {
+      ...NONE,
+      ink: "#ffffff",
+      inkDim: "rgba(255,255,255,0.5)",
+      accent: "#d4af37",
+      entities: [
+        "#e53935",
+        "#757575",
+        "#8d6e63",
+        "#43a047",
+        "#7cff5e",
+        "#0a0a0a",
+        "#0b2b4a",
+        "#0d2b12",
+        "#123d1a",
+      ],
+    },
+    neon: {
+      ...NONE,
+      ink: "#00f5ff",
+      inkDim: "rgba(0,245,255,0.6)",
+      accent: "#f5ff00",
+      entities: [
+        "#ff006e",
+        "#f5ff00",
+        "#ff006e",
+        "#00f5ff",
+        "#00ff88",
+        "#050510",
+        "#031a26",
+        "#0a0520",
+        "#100a24",
+      ],
+      glow: 10,
+    },
+    retro: {
+      ...NONE,
+      ink: "#ffb000",
+      inkDim: "rgba(255,176,0,0.55)",
+      accent: "#33ff66",
+      entities: [
+        "#ffb000",
+        "#ffd166",
+        "#a86a12",
+        "#ffe9b0",
+        "#33ff66",
+        "#0e0b05",
+        "#071208",
+        "#12100a",
+        "#181206",
+      ],
+      glow: 0,
+    },
+  },
 };
 
 export function getPalette(gameId: string, skin: SkinId): GamePalette {

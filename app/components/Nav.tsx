@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useMemo, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { SKINS } from "../data/skins";
 import { useAvSkin, writeAvSkin } from "./SkinContext";
 
@@ -87,6 +87,23 @@ export default function Nav() {
 
   const handleSignOut = () => writeAvUser(null);
 
+  useEffect(() => {
+    if (!open) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open]);
+
   return (
     <>
       <nav className="av-nav">
@@ -147,6 +164,8 @@ export default function Nav() {
           className="btn ghost hamburger"
           onClick={() => setOpen(true)}
           aria-label="Menú"
+          aria-expanded={open}
+          aria-controls="av-mobile-menu"
         >
           ≡
         </button>
@@ -156,7 +175,14 @@ export default function Nav() {
         className={"av-mobile-backdrop" + (open ? " open" : "")}
         onClick={() => setOpen(false)}
       ></div>
-      <aside className={"av-mobile-panel" + (open ? " open" : "")}>
+      <aside
+        id="av-mobile-menu"
+        className={"av-mobile-panel" + (open ? " open" : "")}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Menú"
+        aria-hidden={!open}
+      >
         <div
           className="pixel neon-cyan"
           style={{ fontSize: 11, marginBottom: 16 }}

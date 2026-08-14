@@ -86,6 +86,7 @@ Cada juego real ofrece al menos 3 skins — `clasico` (default), `neon` y `retro
 - **Agente `skin-designer`** — úsalo para auditar/implementar las skins (`clasico`/`neon`/`retro`) de **un** juego real, pasándole su `id` (p. ej. `@skin-designer caida`). Trabaja un solo juego por invocación — no lo lances en paralelo ni le pases varios ids. Mantiene memoria en `references/game-skins.md` (una fila por juego). Ver `.claude/agents/skin-designer.md` y la sección Skins más arriba.
 - **`/spec-game`** (en vez de `/spec`) cuando el requerimiento sea añadir un juego real jugable con leaderboard al catálogo — úsalo después de `game-planner` para especificar **cómo** portarlo. Genera un spec en `specs/` con las preguntas y el contrato de integración específicos: origen del juego, mapeo al catálogo, contrato de HUD, fricciones de portado y orden de la migración de Supabase. Ver `.claude/skills/spec-game/` (incluye `references/integration-contract.md`, el checklist completo de integración).
 - **Agente `mobile-porter`** — úsalo para auditar/arreglar el responsive de **una** ruta del sitio en navegador móvil (Chrome Android / Safari iOS, no PWA), pasándole la ruta (p. ej. `@mobile-porter /hall-of-fame`). Trabaja una sola ruta por invocación, serializado — no lo lances en paralelo (`globals.css` es compartido por todas las rutas). Mantiene memoria en `references/mobile-audit.md` (una fila por ruta). No decide qué juego añadir (`game-planner`), no toca paletas de skin (`skin-designer`) ni la lógica interna de los juegos o de `TouchControls.tsx` más allá de su CSS de layout. Ver `.claude/agents/mobile-porter.md` y `specs/10-touch-controls-mobile.md` (controles táctiles ya resueltos, precedente que no debe repetirse).
+- **`/spec-impl-game`** (en vez de `/spec-impl`) para implementar un spec generado con `/spec-game` (o por el agente `game-jam`). Sigue las mismas cuatro fases de `/spec-impl` y, al terminar, encadena `@skin-designer <id>` y luego `@mobile-porter /game/[id]/play` — **en ese orden, nunca en paralelo** — antes de marcar el spec como `Implementado`. Ver `.claude/skills/spec-impl-game/SKILL.md`.
 
 ## Spec Driven Design
 
@@ -95,7 +96,7 @@ This project follows spec-driven development using `/spec` and `/spec-impl`, bas
 npx skills@latest add Klerith/fernando-skills
 ```
 
-Use `/spec` before implementing new features, then `/spec-impl` to implement against the spec. Para el caso concreto de añadir un juego real jugable con leaderboard, usa `/spec-game` en su lugar — mismo flujo aguas abajo (`Draft` → aprobar → `/spec-impl`).
+Use `/spec` before implementing new features, then `/spec-impl` to implement against the spec. Para el caso concreto de añadir un juego real jugable con leaderboard, usa el par `/spec-game` → `/spec-impl-game` en su lugar — mismo flujo de estados (`Draft` → aprobar → implementar), pero `/spec-impl-game` además encadena `skin-designer` y `mobile-porter` al terminar.
 
 Los specs viven en `specs/NN-slug.md` y se numeran secuencialmente. Estado actual (`01`–`09`): MVP visual, home/about, formulario de contacto con Resend, integración de Supabase, Asteroids real, leaderboard en Supabase, Tetris, Arkanoid y Snake — todos implementados. Lee los dos specs más recientes antes de escribir uno nuevo para heredar convenciones.
 
