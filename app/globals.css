@@ -75,6 +75,10 @@ body,
   margin: 0;
 }
 
+html {
+  overflow-x: hidden;
+}
+
 body {
   background: var(--bg);
   color: var(--ink);
@@ -382,6 +386,9 @@ a {
   .av-nav > .av-skinner {
     display: none;
   }
+  .av-nav .auth-btn {
+    display: none;
+  }
   .av-nav .hamburger {
     display: inline-flex;
   }
@@ -435,6 +442,7 @@ a {
   align-items: center;
   justify-content: center;
   gap: 10px;
+  min-height: 44px;
   padding: 12px 20px;
   font-family: var(--pixel);
   font-size: 10px;
@@ -1129,6 +1137,9 @@ a {
   .hud-actions .btn {
     padding: 10px 14px;
     font-size: 9px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
   }
 }
 
@@ -1223,6 +1234,54 @@ a {
   box-shadow: 0 0 6px var(--green);
 }
 
+/* Pantalla de juego en móvil: recupera ancho útil para el canvas y evita que
+   la franja inferior del CRT se apelotone. */
+@media (max-width: 480px) {
+  .av-player {
+    margin: 16px auto;
+  }
+  .player-hud {
+    gap: 10px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+  }
+  .hud-stats {
+    gap: 9px;
+  }
+  .hud-stat .l {
+    font-size: 8px;
+    letter-spacing: 0.1em;
+  }
+  .hud-stat .v {
+    font-size: 12px;
+  }
+  .crt {
+    padding: 12px;
+    border-radius: 18px;
+  }
+  .crt-bottom {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px 12px;
+    margin-top: 10px;
+    padding: 0;
+    font-size: 7px;
+    text-align: center;
+  }
+  /* El modal de fin de partida apila input y botón: en fila se desbordaba
+     fuera de la tarjeta a 360-390px. */
+  .modal {
+    padding: 24px 18px;
+  }
+  .modal .input-row {
+    flex-direction: column;
+    margin: 18px 0 10px;
+  }
+  .modal .input-row .btn {
+    width: 100%;
+  }
+}
+
 /* ===== touch controls (mobile) ===== */
 .touch-controls {
   position: relative;
@@ -1240,6 +1299,11 @@ a {
     0 0 0 1px rgba(255, 255, 255, 0.02),
     inset 0 1px 0 rgba(255, 255, 255, 0.06),
     inset 0 -2px 0 rgba(0, 0, 0, 0.6);
+}
+/* Juegos sin botones de acción (Ranaria, Serpentina, Bloque Buster): el D-pad
+   se centra en vez de quedar pegado al borde izquierdo. */
+.touch-controls:not(:has(.touch-actions)) {
+  justify-content: center;
 }
 .touch-controls::before {
   content: "";
@@ -1585,6 +1649,20 @@ a {
   border: 1px solid var(--line);
   outline: 0;
   font-family: var(--mono);
+}
+/* Modal de fin de partida en móvil/tablet: 16px evita el zoom automático de
+   iOS Safari al enfocar, y los botones cumplen el mínimo táctil de 44px. */
+@media (max-width: 768px) {
+  .modal .input-row input {
+    font-size: 16px;
+  }
+  .modal .input-row .btn,
+  .modal .actions .btn {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 .modal .input-row input:focus {
   border-color: var(--cyan);

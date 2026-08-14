@@ -4,6 +4,7 @@ import Asteroids from "../components/games/Asteroids";
 import Tetris from "../components/games/Tetris";
 import Arkanoid from "../components/games/Arkanoid";
 import Snake from "../components/games/Snake";
+import Frogger from "../components/games/Frogger";
 
 export interface RealGameEntry {
   component: ComponentType<GameProps & RefAttributes<GameHandle>>;
@@ -14,4 +15,5 @@ export const REAL_GAMES: Record<string, RealGameEntry> = {
   caida: { component: Tetris },
   "bloque-buster": { component: Arkanoid },
   serpentina: { component: Snake },
+  ranaria: { component: Frogger },
 };
